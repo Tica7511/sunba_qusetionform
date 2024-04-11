@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <page name="Default.aspx" menuTitle="首頁 / 公文與簽辦" pageTitle="待審核清單" />
+  <page name="ReviewMeals.aspx" menuTitle="首頁 / 用餐登記" pageTitle="待審核清單" />
+  <page name="ReviewOutdoor.aspx" menuTitle="首頁 / 外出單" pageTitle="待審核清單" />
+  <page name="ReviewDormitory.aspx" menuTitle="首頁 / 宿舍申請" pageTitle="待審核清單" />
+  <page name="ReviewMeetingSituation.aspx" menuTitle="首頁 / 會議室使用狀況" pageTitle="待審核清單" />
+  <page name="MealsEmployeeRegister.aspx" menuTitle="用餐登記 / 同仁用餐登記" pageTitle="同仁用餐登記" />
+  <page name="MealsVisitorRegister.aspx" menuTitle="用餐登記 / 訪客用餐登記" pageTitle="訪客用餐登記" />
+  <page name="MealsEmployeeFee.aspx" menuTitle="用餐登記 / 餐費統計" pageTitle="餐費統計" />
+  <page name="MealsStatistics.aspx" menuTitle="用餐登記 / 用餐管理 / 同仁用餐統計" pageTitle="同仁用餐統計" />
+  <page name="MealsCompany.aspx" menuTitle="用餐登記 / 用餐管理 / 廠商/愛心便當登記" pageTitle="廠商/愛心便當登記" />
+  <page name="MealsCompanyRegister.aspx" menuTitle="用餐登記 / 用餐管理 / 廠商/愛心便當登記" pageTitle="廠商/愛心便當登記" />
+  <page name="MealsPaymentManage.aspx" menuTitle="用餐登記 / 用餐管理 / 餐費繳款管理" pageTitle="餐費繳款管理" />
+  <page name="MealsFee.aspx" menuTitle="用餐登記 / 用餐管理 / 餐費管理" pageTitle="餐費管理" />
+  <page name="MealsCost.aspx" menuTitle="用餐登記 / 用餐管理 / 成本管理" pageTitle="成本管理" />
+  <page name="MealsLocation.aspx" menuTitle="用餐登記 / 用餐管理 / 用餐地點管理" pageTitle="用餐地點管理" />
+  <page name="OutdoorCalendar.aspx" menuTitle="外出單 / 公務車使用狀況" pageTitle="公務車使用狀況" />
+  <page name="OutdoorApply.aspx" menuTitle="外出單 / 外出單申請" pageTitle="外出單申請" />
+  <page name="OutdoorManage.aspx" menuTitle="外出單 / 外出單申請管理" pageTitle="外出單申請管理" />
+  <page name="OutdoorFormDetail.aspx" menuTitle="外出單 / 外出單申請" pageTitle="外出單申請" />
+  <page name="OfficialCarManage.aspx" menuTitle="外出單 / 外出單管理 / 公務車維護" pageTitle="公務車維護" />
+  <page name="OutdoorManagerList.aspx" menuTitle="外出單 / 外出單管理 / 外出單查詢管理" pageTitle="外出單查詢管理" />
+  <page name="MeetingCalendar.aspx" menuTitle="會議室申請 / 會議室使用狀況" pageTitle="會議室使用狀況" />
+  <page name="MeetingRoomApply.aspx" menuTitle="會議室申請 / 會議室申請" pageTitle="會議室申請" />
+  <page name="MeetingManage.aspx" menuTitle="會議室申請 / 會議室申請管理" pageTitle="會議室申請管理" />
+  <page name="MeetingDetail.aspx" menuTitle="會議室申請 / 會議室申請" pageTitle="會議室申請" />
+  <page name="MeetingRoomManage.aspx" menuTitle="會議室申請 / 會議室維護" pageTitle="會議室維護" />
+  <page name="DormitoryRegister.aspx" menuTitle="宿舍申請 / 宿舍申請" pageTitle="宿舍申請" />
+  <page name="DormitoryCancelRegister.aspx" menuTitle="宿舍申請 / 長期住宿退宿申請" pageTitle="長期住宿退宿申請" />
+  <page name="DormitoryRegisterList.aspx" menuTitle="宿舍申請 / 宿舍申請明細" pageTitle="宿舍申請明細" />
+  <page name="DormitoryDetail.aspx" menuTitle="宿舍申請 / 宿舍申請" pageTitle="宿舍申請" />
+  <page name="DormitoryManage.aspx" menuTitle="宿舍申請 / 宿舍入住管理" pageTitle="宿舍入住管理" />
+  <page name="DormitoryRoomManage.aspx" menuTitle="宿舍申請 / 宿舍房號管理" pageTitle="宿舍房號管理" />
+  <page name="Document.aspx" menuTitle="文件管理 / 文件總覽表" pageTitle="文件總覽表" />
+  <page name="DocCategoryManage.aspx" menuTitle="文件管理 / 文件分類/階層管理" pageTitle="文件分類/階層管理" />
+  <page name="SystemSetting.aspx" menuTitle="系統設定" pageTitle="系統設定" />
+</root>

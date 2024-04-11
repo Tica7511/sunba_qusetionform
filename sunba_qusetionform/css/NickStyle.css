@@ -1,0 +1,7 @@
+﻿a.asc:after {
+    content: attr(data-content) '▲';
+}
+
+a.desc:after {
+    content: attr(data-content) '▼';
+}
