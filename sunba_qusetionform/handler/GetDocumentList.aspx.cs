@@ -98,7 +98,7 @@ public partial class handler_GetDocumentList : System.Web.UI.Page
 	private bool GetCompetence(string type)
 	{
 		bool status = false;
-		cdb._c_type = type;
+		cdb._類別 = type;
 		DataTable dt = cdb.GetCompetenceList_Common();
 		if (dt.Rows.Count > 0)
 		{

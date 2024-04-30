@@ -4,7 +4,7 @@
 
 <html>
 <head runat="server">
-	<title>森霸庶務系統</title>
+	<title>森霸線上提問單系統</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="content-language" content="zh-TW" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -37,56 +37,24 @@
 	<script type="text/javascript" src="<%= ResolveUrl("~/js/multiple-select.min.js") %>"></script>
 
 	<!--MyJS-->
-	<script type="text/javascript" src="<%= ResolveUrl("~/page_js/DevTest.js") %>"></script><!-- 開發測試用 -->
 	<script type="text/javascript" src="<%= ResolveUrl("~/page_js/MasterMenu.js") %>"></script>
-	<script type="text/javascript" src="<%= ResolveUrl("~/page_js/FormFlow.js") %>"></script>
+	<%--<script type="text/javascript" src="<%= ResolveUrl("~/page_js/FormFlow.js") %>"></script>--%>
 	<script type="text/javascript" src="<%= ResolveUrl("~/js/NickCommon.js") %>"></script>
 	<script type="text/javascript" src="<%= ResolveUrl("~/js/PageList.js") %>"></script>
 	<asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
 </head>
 <body class="bodybgcolor">
+	<input type="hidden" id="SSOname" value="<%= LoginName %>" />
+    <input type="hidden" id="SSOempid" value="<%= LoginEmpno %>" />
+    <input type="hidden" id="SSOgroupid" value="<%= LoginDeptCode %>" />
+    <input type="hidden" id="SSOgroupname" value="<%= LoginDeptName %>" />
     <div class="d-flex">
         <div class="border-end bg-white shadowR" id="sidebar-wrapper">
             <div class="sidebar-heading"></div>
             <div class="metismenubox">
                 <ul id="metismenu">
-                    <li><a target="_self" href="<%= ResolveUrl("~/WebPage/Default.aspx") %>">首頁</a></li>
-                    <!--<li><a target="_self" href="javascript:void(0);" id="ToUOF">公文與簽辦系統</a>
-                        <form id="form_signForm" method="post">
-                            <input id="signForm_targetUrl" name="TargetUrl" type="hidden" />
-                        </form>
-                    </li>-->
-                    <li><a target="_self" href="javascript:void(0);" class="has-arrow">用餐登記</a>
-                        <ul>
-                            <li><a target="_self" href="<%= ResolveUrl("~/WebPage/MealsEmployeeRegister.aspx") %>">同仁用餐登記</a></li>
-                            <li><a target="_self" href="<%= ResolveUrl("~/WebPage/MealsVisitorRegister.aspx") %>">訪客用餐登記</a></li>
-                            <li><a target="_self" href="<%= ResolveUrl("~/WebPage/MealsEmployeeFee.aspx") %>">餐費統計</a></li>
-                            <li class="meals" style="display: none;"><a target="_self" href="javascript:void(0);" class="has-arrow">用餐管理</a>
-                                <ul>
-                                    <li><a target="_self" href="<%= ResolveUrl("~/WebPage/MealsStatistics.aspx") %>">同仁用餐統計</a></li>
-                                    <li><a target="_self" href="<%= ResolveUrl("~/WebPage/MealsCompany.aspx") %>">外部廠商登記</a></li>
-                                    <li><a target="_self" href="<%= ResolveUrl("~/WebPage/MealsPaymentManage.aspx") %>">餐費繳款管理</a></li>
-                                    <li><a target="_self" href="<%= ResolveUrl("~/WebPage/MealsFee.aspx") %>">餐費管理</a></li>
-                                    <li><a target="_self" href="<%= ResolveUrl("~/WebPage/MealsCost.aspx") %>">成本管理</a></li>
-                                    <li><a target="_self" href="<%= ResolveUrl("~/WebPage/MealsLocation.aspx") %>">用餐地點管理</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                    <li><a target="_self" href="javascript:void(0);" class="has-arrow">外出單</a>
-						<ul>
-							<li><a target="_self" href="<%= ResolveUrl("~/WebPage/OutdoorApply.aspx") %>">外出單申請</a></li>
-							<li><a target="_self" href="<%= ResolveUrl("~/WebPage/OutdoorManage.aspx") %>">外出單申請管理</a></li>
-							<li><a target="_self" href="<%= ResolveUrl("~/WebPage/OutdoorCalendar.aspx") %>">公務車使用狀況</a></li>
-							<li class="outdoor" style="display: none;"><a target="_self" href="javascript:void(0);" class="has-arrow">外出單管理</a><ul>
-								<li><a target="_self" href="<%= ResolveUrl("~/WebPage/OfficialCarManage.aspx") %>">公務車維護</a></li>
-								<li><a target="_self" href="<%= ResolveUrl("~/WebPage/OutdoorManagerList.aspx") %>">外出單查詢管理</a></li>
-								<li><a target="_blank" href="<%= ResolveUrl("~/WebPage/GuardRoom.aspx") %>">外出單(警衛室)</a></li>
-							</ul>
-							</li>
-						</ul>
-					</li>
-                    <li><a target="_self" href="javascript:void(0);" class="has-arrow">會議室申請</a>
+                    <li><a target="_self" href="<%= ResolveUrl("~/WebPage/index.aspx") %>">首頁</a></li>
+                    <%--<li><a target="_self" href="javascript:void(0);" class="has-arrow">會議室申請</a>
                         <ul>
                             <li><a target="_self" href="<%= ResolveUrl("~/WebPage/MeetingCalendar.aspx") %>">會議室使用狀況</a></li>
                             <li><a target="_self" href="<%= ResolveUrl("~/WebPage/MeetingRoomApply.aspx") %>">會議室申請單</a></li>
@@ -94,22 +62,7 @@
                             <li class="meeting" style="display: none;"><a target="_self" href="<%= ResolveUrl("~/WebPage/MeetingRoomManage.aspx") %>">會議室維護</a></li>
                         </ul>
                     </li>
-                    <li><a target="_self" href="javascript:void(0);" class="has-arrow">宿舍申請</a>
-                        <ul>
-                            <li><a target="_self" href="<%= ResolveUrl("~/WebPage/DormitoryRegister.aspx") %>">宿舍申請</a></li>
-                            <li><a target="_self" href="<%= ResolveUrl("~/WebPage/DormitoryCancelRegister.aspx") %>">長期住宿退宿申請</a></li>
-                            <li><a target="_self" href="<%= ResolveUrl("~/WebPage/DormitoryRegisterList.aspx") %>">宿舍申請明細</a></li>
-                            <li class="dormitory" style="display: none;"><a target="_self" href="<%= ResolveUrl("~/WebPage/DormitoryManage.aspx") %>">宿舍入住管理</a></li>
-                            <li class="dormitory" style="display: none;"><a target="_self" href="<%= ResolveUrl("~/WebPage/DormitoryRoomManage.aspx") %>">宿舍房號管理</a></li>
-                        </ul>
-                    </li>
-                    <li><a target="_self" href="javascript:void(0);" class="has-arrow">文件管理</a>
-                        <ul>
-                            <li><a target="_self" href="<%= ResolveUrl("~/WebPage/Document.aspx") %>">文件總覽表</a></li>
-                            <li class="doc" style="display: none;"><a target="_self" href="<%= ResolveUrl("~/WebPage/DocCategoryManage.aspx") %>">文件分類/階層管理</a></li>
-                        </ul>
-                    </li>
-                    <li class="sa" style="display: none;"><a target="_self" href="<%= ResolveUrl("~/WebPage/SystemSetting.aspx") %>">系統設定</a></li>
+                    <li class="sa" style="display: none;"><a target="_self" href="<%= ResolveUrl("~/WebPage/SystemSetting.aspx") %>">系統設定</a></li>--%>
                 </ul>
             </div>
             <!-- metismenubox -->

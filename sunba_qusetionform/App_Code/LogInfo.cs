@@ -61,12 +61,12 @@ public class LogInfo
 	{
 		get
 		{
-			return (HttpContext.Current.Session["affairs_dept_name"] != null) ?
-				 (!string.IsNullOrEmpty(HttpContext.Current.Session["affairs_dept_name"].ToString())) ? HttpContext.Current.Session["affairs_dept_name"].ToString() : "" : "";
+			return (HttpContext.Current.Session["dept_name"] != null) ?
+				 (!string.IsNullOrEmpty(HttpContext.Current.Session["dept_name"].ToString())) ? HttpContext.Current.Session["dept_name"].ToString() : "" : "";
 		}
 		set
 		{
-			HttpContext.Current.Session["affairs_dept_name"] = value;
+			HttpContext.Current.Session["dept_name"] = value;
 		}
 	}
 
@@ -77,12 +77,12 @@ public class LogInfo
 	{
         get
         {
-            return (HttpContext.Current.Session["affairs_dept_code"] != null) ?
-                 (!string.IsNullOrEmpty(HttpContext.Current.Session["affairs_dept_code"].ToString())) ? HttpContext.Current.Session["affairs_dept_code"].ToString() : "" : "";
+            return (HttpContext.Current.Session["dept_code"] != null) ?
+                 (!string.IsNullOrEmpty(HttpContext.Current.Session["dept_code"].ToString())) ? HttpContext.Current.Session["dept_code"].ToString() : "" : "";
         }
         set
         {
-            HttpContext.Current.Session["affairs_dept_code"] = value;
+            HttpContext.Current.Session["dept_code"] = value;
         }
     }
 

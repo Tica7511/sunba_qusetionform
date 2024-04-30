@@ -5,24 +5,39 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data;
+using System.Configuration;
 
 public partial class MasterPage : System.Web.UI.MasterPage
 {
-	public string LoginName, LoginEmpno;
+	public string LoginName, LoginEmpno, LoginDeptCode, LoginDeptName;
 	Competence_DB cdb = new Competence_DB();
 	protected void Page_Load(object sender, EventArgs e)
 	{
 		if (!LogInfo.isLogin)
 		{
-			Response.Redirect("https://powersunba.com.tw/SSO/");
-			//Session["登入工號"] = "531777";
-			//Session["登入姓名"] = "Nick";
+			if(ConfigurationManager.AppSettings["IsTesting"] == "open")
+            {
+				Session["登入工號"] = "laputa";
+				Session["登入姓名"] = "賴斐瓔";
+				Session["dept_code"] = "Company";
+				Session["dept_name"] = "森霸";
+				LoginEmpno = Session["登入工號"].ToString();
+				LoginName = Session["登入姓名"].ToString();
+				LoginDeptCode = Session["dept_code"].ToString();
+				LoginDeptName = Session["dept_name"].ToString();
+			}
+            else
+            {
+				Response.Redirect("https://powersunba.com.tw/SSO/");
+			}
 		}
 		else
 		{
 			LoginEmpno = Session["登入工號"].ToString();
 			LoginName = Session["登入姓名"].ToString();
-			Account.ExecSignIn(LoginEmpno);
+			LoginDeptCode = Session["dept_code"].ToString();
+			LoginDeptName = Session["dept_name"].ToString();
+			//Account.ExecSignIn(LoginEmpno);
 			CheckCompetence();
 		}
 	}
@@ -34,25 +49,7 @@ public partial class MasterPage : System.Web.UI.MasterPage
 		bool cStatus = false;
 		switch (nowPage)
 		{
-			case "MealsStatistics.aspx":
-			case "MealsCompany.aspx":
-			case "MealsCompanyRegister.aspx":
-			case "MealsPaymentManage.aspx":
-			case "MealsFee.aspx":
-			case "MealsCost.aspx":
-			case "MealsLocation.aspx":
-				cStatus = CheckDtList("01");
-				break;
-			case "OfficialCarManage.aspx":
-			case "OutdoorManagerList.aspx":
-				cStatus = CheckDtList("03");
-				break;
-			case "MeetingRoomManage.aspx":
-				cStatus = CheckDtList("06");
-				break;
-			case "DormitoryManage.aspx":
-			case "DormitoryRoomManage.aspx":
-				cStatus = CheckDtList("dormitory");
+			case "index.aspx":
 				break;
 			case "SystemSetting.aspx":
 				cStatus = CheckDtList("");
@@ -60,21 +57,14 @@ public partial class MasterPage : System.Web.UI.MasterPage
 		}
 
 		if (cStatus)
-			Response.Write("<script type='text/javascript'>alert('您沒有權限進入此頁面!'); location.href='Default.aspx'</script>");
+			Response.Write("<script type='text/javascript'>alert('您沒有權限進入此頁面!'); location.href='index.aspx'</script>");
 	}
 
 	private bool CheckDtList(string cType)
 	{
 		bool status = true;
 		DataTable dt = new DataTable();
-		if (cType != "dormitory")
-		{
-			cdb._c_type = cType;
-			dt = cdb.GetCompetenceList_Common();
-		}
-		else
-			dt = cdb.GetCompetenceList_ForDormitory();
-
+		dt = cdb.GetCompetenceList_Common();
 
 		if (dt.Rows.Count > 0)
 		{

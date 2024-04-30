@@ -247,7 +247,7 @@ public class Common
 	{
 		bool status = false;
 		Competence_DB db = new Competence_DB();
-		db._c_type = group;
+		db._類別 = group;
 		DataTable dt = db.GetListOfType();
 		if (dt.Rows.Count > 0)
 		{

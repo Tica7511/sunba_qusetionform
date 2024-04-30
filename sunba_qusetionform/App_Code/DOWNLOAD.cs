@@ -8,52 +8,65 @@ using System.Linq;
 
 namespace ED.HR.DOWNLOAD.WebForm
 {
-	public partial class DownloadImage : System.Web.UI.Page
+    public partial class DownloadImage : System.Web.UI.Page
     {
-        string OrgName = "";
+        string OrgName = string.Empty;
         string UpLoadPath = ConfigurationManager.AppSettings["UploadFileRootDir"];
-        File_DB fdb = new File_DB();
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			try
-			{
-				if (!string.IsNullOrEmpty(Common.FilterCheckMarxString(Request.QueryString["v"])))
-				{
-					fdb._File_ID = Common.Decrypt(Common.FilterCheckMarxString(Request.QueryString["v"]));
-					DataTable dt = fdb.GetFileDetail();
-					if (dt.Rows.Count > 0)
-					{
-						//附件資料夾檔名 > File_Type=資料夾名稱
-						UpLoadPath = UpLoadPath + dt.Rows[0]["File_Type"].ToString() + "\\";
+        FileTable_DB db = new FileTable_DB();
 
-						//原檔名
-						OrgName = Common.FilterCheckMarxString(dt.Rows[0]["File_Orgname"].ToString()) + Common.FilterCheckMarxString(dt.Rows[0]["File_Exten"].ToString());
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(Common.FilterCheckMarxString(Request.QueryString["v"])))
+                {
+                    if (!string.IsNullOrEmpty(Common.FilterCheckMarxString(Request.QueryString["type"])))
+                        db._檔案類型 = Request.QueryString["type"].ToString();
+                    if (!string.IsNullOrEmpty(Common.FilterCheckMarxString(Request.QueryString["fsn"])))
+                        db._排序 = Request.QueryString["fsn"].ToString();
+                    db._guid = Common.Decrypt(Common.FilterCheckMarxString(Request.QueryString["v"]));
+                    DataTable dt = db.GetList();
+                    if (dt.Rows.Count > 0)
+                    {
+                        //附件資料夾檔名
+                        switch (Common.FilterCheckMarxString(dt.Rows[0]["檔案類型"].ToString()))
+                        {
+                            case "01":
+                                UpLoadPath = UpLoadPath + "question\\";
+                                break;
+                            case "02":
+                                UpLoadPath = UpLoadPath + "reply\\";
+                                break;
+                        }
 
-						// 附件目錄
-						DirectoryInfo dir = new DirectoryInfo(UpLoadPath);
+                        //原檔名
+                        OrgName = Common.FilterCheckMarxString(dt.Rows[0]["原檔名"].ToString()) + Common.FilterCheckMarxString(dt.Rows[0]["附檔名"].ToString());
 
-						//列舉全部檔案再比對檔名
-						string FileName = Common.FilterCheckMarxString(dt.Rows[0]["File_Encryname"].ToString()) + Common.FilterCheckMarxString(dt.Rows[0]["File_Exten"].ToString());
-						FileInfo file = dir.EnumerateFiles().FirstOrDefault(m => m.Name == FileName);
+                        // 附件目錄
+                        DirectoryInfo dir = new DirectoryInfo(UpLoadPath);
 
-						// 判斷檔案是否存在
-						if (file != null && file.Exists)
-							Download(file);
-						else
-							throw new Exception("File not exist");
-					}
-					else
-					{
-						throw new Exception("File not exist");
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Response.Write("Error Message: " + ex.Message);
-				Response.End();
-			}
-		}
+                        //列舉全部檔案再比對檔名
+                        string FileName = Common.FilterCheckMarxString(dt.Rows[0]["新檔名"].ToString()) + Common.FilterCheckMarxString(dt.Rows[0]["附檔名"].ToString());
+                        FileInfo file = dir.EnumerateFiles().FirstOrDefault(m => m.Name == FileName);
+
+                        // 判斷檔案是否存在
+                        if (file != null && file.Exists)
+                            Download(file);
+                        else
+                            throw new Exception("檔案不存在");
+                    }
+                    else
+                    {
+                        throw new Exception("檔案不存在");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //Response.Write("Error Message: " + ex.Message);
+                //Response.End();
+            }
+        }
 
 
         private void Download(FileInfo DownloadFile)
@@ -67,12 +80,9 @@ namespace ED.HR.DOWNLOAD.WebForm
             Response.AppendHeader("Content-Length", DownloadFile.Length.ToString());
             Response.HeaderEncoding = System.Text.Encoding.GetEncoding("Big5");
             Response.WriteFile(DownloadFile.FullName);
-			Response.Flush();
-			//忽視之後透過Response.Write輸出的內容
-			Response.SuppressContent = true;
-			//忽略之後ASP.NET Pipeline的處理步驟，直接跳關到EndRequest
-			HttpContext.Current.ApplicationInstance.CompleteRequest();
-		}
+            Response.Flush();
+            Response.End();
+        }
 
         #region 傳回 ContentType
         /// <summary>

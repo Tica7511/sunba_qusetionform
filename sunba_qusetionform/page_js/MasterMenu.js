@@ -17,26 +17,8 @@
                 var MealsManager, OutdoorManager, MeetingManager, Dormitory, DormitoryManager, DocManager, SystemAdmin;
                 if ($(data).find("data_item").length > 0) {
                     $(data).find("data_item").each(function (i) {
-                        var empno = $(this).children("c_empno").text().trim().split(',');
-                        switch ($(this).children("c_type").text().trim()) {
-                            case "01":
-                                MealsManager = empno;
-                                break;
-                            case "03":
-                                OutdoorManager = empno;
-                                break;
-                            case "04":
-                                Dormitory = empno;
-                                break;
-                            case "05":
-                                DormitoryManager = empno;
-                                break;
-                            case "06":
-                                MeetingManager = empno;
-                                break;
-                            case "07":
-                                DocManager = empno;
-                                break;
+                        var empno = $(this).children("員工編號").text().trim().split(',');
+                        switch ($(this).children("類別").text().trim()) {
                             case "sa":
                                 SystemAdmin = empno;
                                 break;
@@ -44,20 +26,8 @@
                     });
                 }
 
-                if ($.inArray($("LoginEmpno", data).text(), MealsManager) != -1 || $.inArray($("LoginEmpno", data).text(), SystemAdmin) != -1)
-                    $(".meals").show();
-
-                if ($.inArray($("LoginEmpno", data).text(), OutdoorManager) != -1 || $.inArray($("LoginEmpno", data).text(), SystemAdmin) != -1)
-                    $(".outdoor").show();
-
-                if ($.inArray($("LoginEmpno", data).text(), MeetingManager) != -1 || $.inArray($("LoginEmpno", data).text(), SystemAdmin) != -1)
-                    $(".meeting").show();
-
-                if ($.inArray($("LoginEmpno", data).text(), Dormitory) != -1 || $.inArray($("LoginEmpno", data).text(), DormitoryManager) != -1 || $.inArray($("LoginEmpno", data).text(), SystemAdmin) != -1)
-                    $(".dormitory").show();
-
-                if ($.inArray($("LoginEmpno", data).text(), DocManager) != -1 || $.inArray($("LoginEmpno", data).text(), SystemAdmin) != -1)
-                    $(".doc").show();
+                //if ($.inArray($("LoginEmpno", data).text(), MealsManager) != -1 || $.inArray($("LoginEmpno", data).text(), SystemAdmin) != -1)
+                //    $(".meals").show();
 
                 if ($.inArray($("LoginEmpno", data).text(), SystemAdmin) != -1)
                     $(".sa").show();
