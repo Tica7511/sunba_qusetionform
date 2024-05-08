@@ -15,6 +15,7 @@ public partial class handler_AddReplyForm : System.Web.UI.Page
     FileTable_DB fdb = new FileTable_DB();
     Reply_DB rdb = new Reply_DB();
     QuestionForm_DB qdb = new QuestionForm_DB();
+    QuestionFormLog_DB qldb = new QuestionFormLog_DB();
     //Admin_DB adb = new Admin_DB();
     CodeTable_DB cdb = new CodeTable_DB();
     SendMail send_mail = new SendMail();
@@ -44,6 +45,13 @@ public partial class handler_AddReplyForm : System.Web.UI.Page
 
         try
         {
+            #region Check Session Timeout
+            if (!LogInfo.isLogin)
+            {
+                throw new Exception("登入帳號已失效，請重新登入");
+            }
+            #endregion
+
             string guid = (string.IsNullOrEmpty(Request["guid"])) ? "" : Request["guid"].ToString().Trim();
             string returnday = (string.IsNullOrEmpty(Request["returnday"])) ? "" : Request["returnday"].ToString().Trim();
             string finishday = (string.IsNullOrEmpty(Request["finishday"])) ? "" : Request["finishday"].ToString().Trim();
@@ -102,13 +110,12 @@ public partial class handler_AddReplyForm : System.Web.UI.Page
 
                 rdb.InsertData(oConn, myTrans);
 
-                //qldb._類別 = "新增";
-                //qldb._儲存類別 = "填表人";
-                //qldb._填表人 = Server.UrlDecode(fillformname);
-                //qldb._儲存內容 = Server.UrlDecode(orgnization) + Server.UrlDecode(day)
-                //    + Server.UrlDecode(rtype) + Server.UrlDecode(nContent) + item + sn + DateTime.Now.Year.ToString() + "-" + nMonth + "-" + sn;
-                //
-                //qldb.InsertData(oConn, myTrans);
+                qldb._類別 = "新增";
+                qldb._儲存類別 = "回覆人員";
+                qldb._填表人 = Server.UrlDecode(fillformname);
+                qldb._儲存內容 = Server.UrlDecode(returnday) + Server.UrlDecode(finishday) + Server.UrlDecode(state)
+                    + Server.UrlDecode(nContent);
+                qldb.InsertData(oConn, myTrans);
 
                 qdb._guid = guid;
                 qdt = qdb.GetData();
@@ -148,12 +155,12 @@ public partial class handler_AddReplyForm : System.Web.UI.Page
 
                     string Subject = "提問單回覆人員問題回覆通知";
 
-                    mailContent = "系統通知:<br><br>線上提問單系統之問題已有回覆，請上 <a href = 'https://powersunba.com.tw/SunBa_Question/index.aspx'>線上提問單系統</a>";
+                    mailContent = "系統通知:<br><br>線上提問單系統之問題已有回覆，請上 <a href = 'https://powersunba.com.tw/SunBa_Question/WebPage/index.aspx'>線上提問單系統</a>";
                     mailContent += " 進行檢視並確認問題回覆之內容，以下為問題回覆之詳細資料，感謝您<br>";
                     mailContent += "編號: " + qdt.Rows[0]["編號"].ToString().Trim() + "<br/>問題類別:" + questionTypeName + "<br/>填表人: " + qdt.Rows[0]["填表人"].ToString().Trim() +
-                        "<br/>提出日期: " + day_v + "<br/>急迫性: " + rtype_v + "<br/>問題描述: " + qdt.Rows[0]["內容"].ToString().Trim() + "<br/>回覆人" + fillformname + "<br/>回覆內容: " + Server.UrlDecode(nContent);
+                        "<br/>提出日期: " + day_v + "<br/>急迫性: " + rtype_v + "<br/>問題描述: " + qdt.Rows[0]["內容"].ToString().Trim() + "<br/>回覆內容: " + Server.UrlDecode(nContent);
 
-                    sdb._帳號 = dt.Rows[0]["員工編號"].ToString().Trim();
+                    sdb._帳號 = qdt.Rows[0]["員工編號"].ToString().Trim();
                     sdt = sdb.GetListByEmpid();
 
                     if (sdt.Rows.Count > 0)
@@ -169,13 +176,12 @@ public partial class handler_AddReplyForm : System.Web.UI.Page
                 rdb._修改者id = LogInfo.empNo;
                 rdb.UpdateData(oConn, myTrans);
 
-                //qldb._類別 = "編輯";
-                //qldb._儲存類別 = "填表人員";
-                //qldb._填表人 = Server.UrlDecode(fillformname);
-                //qldb._儲存內容 = Server.UrlDecode(orgnization) + Server.UrlDecode(day)
-                //    + Server.UrlDecode(rtype) + Server.UrlDecode(nContent);
-                //
-                //qldb.InsertData(oConn, myTrans);
+                qldb._類別 = "編輯";
+                qldb._儲存類別 = "回覆人員";
+                qldb._填表人 = Server.UrlDecode(fillformname);
+                qldb._儲存內容 = Server.UrlDecode(returnday) + Server.UrlDecode(finishday) + Server.UrlDecode(state)
+                    + Server.UrlDecode(nContent);
+                qldb.InsertData(oConn, myTrans);
             }
 
 

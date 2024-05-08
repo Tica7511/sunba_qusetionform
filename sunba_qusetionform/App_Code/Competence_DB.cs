@@ -22,10 +22,10 @@ public class Competence_DB
 	string 類別名稱 = string.Empty;
     string 員工編號 = string.Empty;
 	string 建立者 = string.Empty;
-	string 建立者名稱 = string.Empty;
+	string 建立者id = string.Empty;
 	DateTime 建立日期;
 	string 修改者 = string.Empty;
-	string 修改者名稱 = string.Empty;
+	string 修改者id = string.Empty;
 	DateTime 修改日期;
 	string 資料狀態 = string.Empty;
 	#endregion
@@ -36,10 +36,10 @@ public class Competence_DB
 	public string _類別名稱 { set { 類別名稱 = value; } }
 	public string _員工編號 { set { 員工編號 = value; } }
 	public string _建立者 { set { 建立者 = value; } }
-	public string _建立者名稱 { set { 建立者名稱 = value; } }
+	public string _建立者id { set { 建立者id = value; } }
 	public DateTime _建立日期 { set { 建立日期 = value; } }
 	public string _修改者 { set { 修改者 = value; } }
-	public string _修改者名稱 { set { 修改者名稱 = value; } }
+	public string _修改者id { set { 修改者id = value; } }
 	public DateTime _修改日期 { set { 修改日期 = value; } }
 	public string _資料狀態 { set { 資料狀態 = value; } }
 	#endregion

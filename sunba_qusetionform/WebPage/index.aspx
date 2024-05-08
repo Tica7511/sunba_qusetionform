@@ -173,16 +173,14 @@
                     <tr class="table-secondary">
                         <th class="text-center" nowrap="">項次</th>
                         <th class="text-center" nowrap="">編號 <a href="javascript:void(0);" id="d_numAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_numDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
+						<th class="text-center" width="15%" nowrap="">內容</th>
+                        <th class="text-center" nowrap="">回覆內容</th>
                         <th class="text-center" nowrap="">問題類別 <a href="javascript:void(0);" id="d_questionTypeAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_questionTypeDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
                         <th class="text-center" nowrap="">員工編號 <a href="javascript:void(0);" id="d_empidAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_empidDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
                         <th class="text-center" nowrap="">填表人 <a href="javascript:void(0);" id="d_empNameAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_empNameDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
                         <th class="text-center" nowrap="">部門 <a href="javascript:void(0);" id="d_orgnizationAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_orgnizationDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
                         <th class="text-center" nowrap="">提出日期 <a href="javascript:void(0);" id="d_purposeDateAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_purposeDateDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
                         <th class="text-center" nowrap="">急迫性 <a href="javascript:void(0);" id="d_urgentAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_urgentDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
-                        <th class="text-center" nowrap="">內容</th>
-                        <th class="text-center" nowrap="">附件</th>
-                        <th class="text-center" nowrap="">填表內容</th>
-                        <th class="text-center" nowrap="">回覆內容</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -281,13 +279,23 @@
 						    	</div>
 						    </div>
 
-						    <div id="div_file" class="row mt-1 flex-md-nowrap align-items-center OchiRow">
+						    <div class="row mt-1 flex-md-nowrap align-items-center OchiRow">
 						        <div class="col-md-auto TitleSetWidth text-md-end">
 						            <label class="form-label">檔案上傳</label>
 						        </div>
-						        <div class="col-md-auto flex-grow-1">
+								<div class="col-md-auto flex-grow-1">
 						            <input type="file" class="form-control newstr" id="ntxt_file" name="ntxt_file" multiple="multiple">
 						            <div class="mt-1" id="FileList"></div>
+									<table id="tablistfile" class="table table-bordered table-striped">
+										<thead>
+											<tr class="table-secondary">
+												<th class="text-center">文件名稱</th>
+												<th width="25%" class="text-center">上傳日期</th>
+												<th id="th_file" width="10%" class="text-center">功能</th>
+											</tr>
+										</thead>
+										<tbody></tbody>
+									</table>
 						        </div>
 						    </div>
 						</div><br />
@@ -369,13 +377,23 @@
 						    	</div>
 						    </div>
 
-						    <div id="div_file2" class="row mt-1 flex-md-nowrap align-items-center OchiRow">
+						    <div class="row mt-1 flex-md-nowrap align-items-center OchiRow">
 						        <div class="col-md-auto TitleSetWidth text-md-end">
 						            <label class="form-label">檔案上傳</label>
 						        </div>
 						        <div class="col-md-auto flex-grow-1">
 						            <input type="file" class="form-control newstr" id="ntxt_file2" name="ntxt_file2" multiple="multiple">
 						            <div class="mt-1" id="FileList2"></div>
+									<table id="tablistfile2" class="table table-bordered table-striped">
+										<thead>
+											<tr class="table-secondary">
+												<th class="text-center">文件名稱</th>
+												<th width="25%" class="text-center">上傳日期</th>
+												<th id="th_file2" width="10%" class="text-center">功能</th>
+											</tr>
+										</thead>
+										<tbody></tbody>
+									</table>
 						        </div>
 						    </div>
 						</div><br />
@@ -397,7 +415,7 @@
         </div>
     </div>
 
-	<div class="modal fade" id="FileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<%--<div class="modal fade" id="FileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-lg modal-dialog-scrollable">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -415,7 +433,7 @@
 								<tr class="table-secondary">
 									<th class="text-center">文件名稱</th>
 									<th class="text-center">上傳日期</th>
-									<%--<th class="text-center">功能</th>--%>
+									<th class="text-center">功能</th>
 								</tr>
 							</thead>
 							<tbody></tbody>
@@ -431,7 +449,7 @@
 								<tr class="table-secondary">
 									<th class="text-center">文件名稱</th>
 									<th class="text-center">上傳日期</th>
-									<%--<th class="text-center">功能</th>--%>
+									<th class="text-center">功能</th>
 								</tr>
 							</thead>
 							<tbody></tbody>
@@ -443,7 +461,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div>--%>
 </asp:Content>
 
 

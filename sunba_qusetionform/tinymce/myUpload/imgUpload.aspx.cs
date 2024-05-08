@@ -41,7 +41,7 @@ public partial class tinymce_myUpload_imgUpload : System.Web.UI.Page
 				//上傳檔案
 				afile.SaveAs(ImgUpLoadPath + newName);
 
-				string ReturnPath = Request.Url.Scheme + "://" + Request.Url.Authority.ToString() + Request.ApplicationPath + "tinymce/myUpload/filedownload.aspx?v=" + newName;
+				string ReturnPath = Request.Url.Scheme + "://" + Request.Url.Authority.ToString() + Request.ApplicationPath + "/tinymce/myUpload/filedownload.aspx?v=" + newName;
 
 				string xmlstr = string.Empty;
 				xmlstr = "<?xml version='1.0' encoding='utf-8'?><root><Response>" + ReturnPath + "</Response></root>";

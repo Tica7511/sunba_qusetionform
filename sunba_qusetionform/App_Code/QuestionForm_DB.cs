@@ -69,7 +69,7 @@ public class QuestionForm_DB
     public string _建立者 { set { 建立者 = value; } }
     public string _建立者id { set { 建立者id = value; } }
     public DateTime _建立日期 { set { 建立日期 = value; } }
-    public string _修改者 { set { 建立者 = value; } }
+    public string _修改者 { set { 修改者 = value; } }
     public string _修改者id { set { 修改者id = value; } }
     public DateTime _修改日期 { set { 修改日期 = value; } }
     #endregion

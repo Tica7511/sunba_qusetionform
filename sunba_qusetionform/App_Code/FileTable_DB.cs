@@ -58,10 +58,7 @@ public class FileTable_DB
         oCmd.Connection = new SqlConnection(ConfigurationManager.AppSettings["ConnectionString"]);
         StringBuilder sb = new StringBuilder();
 
-        sb.Append(@"SELECT *, CONVERT(nvarchar(100),建立日期, 20) as 上傳日期 from 附件檔 where 資料狀態=@資料狀態 ");
-
-        if (!string.IsNullOrEmpty(guid))
-            sb.Append(@"and guid=@guid ");
+        sb.Append(@"SELECT *, CONVERT(nvarchar(100),建立日期, 20) as 上傳日期 from 附件檔 where 資料狀態=@資料狀態 and guid=@guid ");
 
         if (!string.IsNullOrEmpty(檔案類型))
             sb.Append(@"and 檔案類型=@檔案類型 ");

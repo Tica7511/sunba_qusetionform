@@ -12,6 +12,7 @@
         height: 300,
         language: "zh_TW",
         plugins: 'advlist autolink lists link image table charmap print preview hr anchor pagebreak code paste',
+        paste_data_images: true,
         toolbar: "undo redo | fontselect fontsizeselect | styleselect | forecolor backcolor | bold italic underline | alignleft aligncenter alignright alignjustify | link image",
         font_formats: "新細明體=新細明體;標楷體=標楷體;微軟正黑體=微軟正黑體;Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats;",
         fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt 42pt 60pt 72pt",
@@ -45,6 +46,30 @@
                     }
                 }
             });
+        },
+        setup: function (editor) {
+            editor.on('paste', function (e) {
+                var clipboardData = e.clipboardData || window.clipboardData;
+                var items = clipboardData.items;
+
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf("image") !== -1) {
+                        var blob = items[i].getAsFile();
+                        var reader = new FileReader();
+
+                        reader.onload = function (event) {
+                            var base64 = event.target.result;
+                            var filename = blob.name; // 取得原始檔案名稱
+                            var extension = filename.split('.').pop(); // 取得副檔名
+
+                            // 將 base64 資料轉換為 Blob 物件
+                            var blob = base64ToBlob(base64, 'image/' + extension);
+                        };
+
+                        reader.readAsDataURL(blob);
+                    }
+                }
+            });
         }
     });
 
@@ -54,6 +79,7 @@
         height: 300,
         language: "zh_TW",
         plugins: 'advlist autolink lists link image table charmap print preview hr anchor pagebreak code paste',
+        paste_data_images: true,
         toolbar: "undo redo | fontselect fontsizeselect | styleselect | forecolor backcolor | bold italic underline | alignleft aligncenter alignright alignjustify | link image",
         font_formats: "新細明體=新細明體;標楷體=標楷體;微軟正黑體=微軟正黑體;Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats;",
         fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt 42pt 60pt 72pt",
@@ -84,6 +110,30 @@
                         img.onload = function () {
                             success($("Response", data).text());
                         }
+                    }
+                }
+            });
+        },
+        setup: function (editor) {
+            editor.on('paste', function (e) {
+                var clipboardData = e.clipboardData || window.clipboardData;
+                var items = clipboardData.items;
+
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf("image") !== -1) {
+                        var blob = items[i].getAsFile();
+                        var reader = new FileReader();
+
+                        reader.onload = function (event) {
+                            var base64 = event.target.result;
+                            var filename = blob.name; // 取得原始檔案名稱
+                            var extension = filename.split('.').pop(); // 取得副檔名
+
+                            // 將 base64 資料轉換為 Blob 物件
+                            var blob = base64ToBlob(base64, 'image/' + extension);
+                        };
+
+                        reader.readAsDataURL(blob);
                     }
                 }
             });
@@ -182,11 +232,13 @@
         $("#nsel_orgnization").val($("#SSOgroupname").val());
         $("#Qguid").val('');
         $("#ntxt_file").val('');
+        $("#ffGuid").val('');
+        getDataFile('01', 'tablistfile');
 
         $("#ntxt_num").attr("disabled", true);
         $("#nsel_questionType").attr("disabled", false);
         $("#ntxt_day").attr("disabled", true);
-        $("#div_file").show();
+        $("#ntxt_file").show();
         $("#n_subbtn").show();
 
         $(".newstr").val("");
@@ -194,7 +246,6 @@
         $("#ntxt_num").val(getSn());
         $("#ntxt_day").val(getTaiwanDate());
         $("#nsel_type").attr("disabled", false);
-        $("#div_file").show();
         $("#div_commenttinymce").show();
         $("#div_commentdiv").hide();
         $("#n_subbtn").show();
@@ -213,18 +264,20 @@
         $("#ntxt_num").attr("disabled", true);
         $("#nsel_questionType").attr("disabled", true);
         $("#ntxt_day").attr("disabled", true);
+        $("#ffGuid").val($(this).attr("aid"));
+        getDataFile('01', 'tablistfile');
         getData2();
 
         if ($(this).attr("atype") == 'edit') {
             $("#nsel_type").attr("disabled", false);
-            $("#div_file").show();
+            $("#ntxt_file").show();
             $("#div_commenttinymce").show();
             $("#div_commentdiv").hide();
             $("#n_subbtn").show();
         }
         else {
             $("#nsel_type").attr("disabled", true);
-            $("#div_file").hide();
+            $("#ntxt_file").hide();
             $("#div_commenttinymce").hide();
             $("#div_commentdiv").show();
             $("#n_subbtn").hide();
@@ -246,13 +299,15 @@
         $("#ck_contract").prop("checked", false);
         $("#div_reply").empty();
         $("#div_reply").append('');
+        $("#ffGuid").val($(this).attr("aid"));
+        getDataFile('02', 'tablistfile2');
         getData3();
 
         if ($(this).attr("atype") == 'edit') {
             $("#ntxt_finishday").attr("disabled", false);
             $("#nsel_state").attr("disabled", false);
             $("#ck_contract").attr("disabled", false);
-            $("#div_file2").show();
+            $("#ntxt_file2").show();
             $("#div_replytinymce").show();
             $("#div_replydiv").hide();
             $("#n_subbtn2").show();
@@ -261,7 +316,7 @@
             $("#ntxt_finishday").attr("disabled", true);
             $("#nsel_state").attr("disabled", true);
             $("#ck_contract").attr("disabled", true);
-            $("#div_file2").hide();
+            $("#ntxt_file2").hide();
             $("#div_replytinymce").hide();
             $("#div_replydiv").show();
             $("#n_subbtn2").hide();
@@ -416,6 +471,7 @@
     //刪除檔案按鈕
     $(document).on("click", "a[name='delbtn2']", function () {
         var tabname = '';
+        var ftype = $(this).attr("ftype");
         if ($(this).attr("ftype") == '01')
             tabname = 'tablistfile';
         else
@@ -427,7 +483,7 @@
                 async: false, //在沒有返回值之前,不會執行下一步動作
                 url: "../handler/DelFile.aspx",
                 data: {
-                    ftype: $(this).attr("ftype"),
+                    ftype: ftype,
                     fsn: $(this).attr("fsn"),
                     guid: $(this).attr("aid")
                 },
@@ -441,7 +497,7 @@
                     }
                     else {
                         alert($("Response", data).text());
-                        getDataFile(tabname);
+                        getDataFile(ftype, tabname);
                     }
                 }
             });
@@ -617,50 +673,71 @@ function getData(p) {
                     $(data).find("data_item").each(function (i) {
                         tabstr += '<tr>';
                         tabstr += '<td class="text-center" nowrap="nowrap">' + $(this).children("項次").text().trim() + '</td>';
-                        tabstr += '<td class="text-center" nowrap="nowrap">' + $(this).children("編號").text().trim() + '</td>';
+                        tabstr += '<td class="text-center" nowrap="nowrap">';
+                        //管理者僅能瀏覽填表內容(lapua除外)，森霸人員可以編輯自己的填表內容不是自己的僅能編輯
+                        if ($("IsManager", data).text() == "Y") {
+                            tabstr += '<a href="javascript:void(0);" style="text-decoration: underline;" name="commenteditbtn" atype="view" aid="' + $(this).children("guid").text().trim() + '">' + $(this).children("編號").text().trim() + '</a>';
+                        }
+                        else {
+                            if ($("#SSOempid").val() == $(this).children("員工編號").text().trim())
+                                tabstr += '<a href="javascript:void(0);" style="text-decoration: underline;" name="commenteditbtn" atype="edit" aid="' + $(this).children("guid").text().trim() + '">' + $(this).children("編號").text().trim() + '</a>';
+                            else
+                                tabstr += '<a href="javascript:void(0);" style="text-decoration: underline;" name="commenteditbtn" atype="view" aid="' + $(this).children("guid").text().trim() + '">' + $(this).children("編號").text().trim() + '</a>';
+                        }
+                        tabstr += '</td>';
+                        tabstr += '<td class="">' + $(this).children("內容").text().trim() + '</td>';
+                        //管理者僅能編輯回覆內容(lapua除外)
+                        if ($("IsManager", data).text() == "Y") {
+                            if ($("#SSOempid").val() == 'laputa') {
+                                tabstr += '<td class="text-center" nowrap="nowrap">';
+                                tabstr += '<a href="javascript:void(0);" class="btn btn-outline-primary btn-sm text-nowrap" name="replyeditbtn" atype="edit" aid="' + $(this).children("guid").text().trim() + '">編輯</a>&nbsp;&nbsp;';
+                                tabstr += '</td>';
+                            }
+                            else {
+                                //if ($("#SSOempid").val() == $(this).children("員工編號").text().trim()) {
+                                //tabstr += '<td class="text-center" nowrap="nowrap">';
+                                //tabstr += '<a href="javascript:void(0);" class="btn btn-outline-primary btn-sm text-nowrap" name="replyeditbtn" atype="edit" aid="' + $(this).children("guid").text().trim() + '">編輯</a>&nbsp;&nbsp;';
+                                //tabstr += '</td>';
+                                //}
+                                //else {
+                                //tabstr += '<td class="text-center" nowrap="nowrap">';
+                                //tabstr += '<a href="javascript:void(0);" class="btn btn-outline-primary btn-sm text-nowrap" name="replyeditbtn" atype="view" aid="' + $(this).children("guid").text().trim() + '">瀏覽</a>&nbsp;&nbsp;';
+                                //tabstr += '</td>';
+                                //}
+                                tabstr += '<td class="text-center" nowrap="nowrap">';
+                                tabstr += '<a href="javascript:void(0);" class="btn btn-outline-primary btn-sm text-nowrap" name="replyeditbtn" atype="edit" aid="' + $(this).children("guid").text().trim() + '">編輯</a>&nbsp;&nbsp;';
+                                tabstr += '</td>';
+                            }
+                        }
+                        else {
+                            tabstr += '<td class="text-center" nowrap="nowrap">';
+                            tabstr += '<a href="javascript:void(0);" class="btn btn-outline-primary btn-sm text-nowrap" name="replyeditbtn" aid="' + $(this).children("guid").text().trim() + '">瀏覽</a>&nbsp;&nbsp;';
+                            tabstr += '</td>';
+                        }
                         tabstr += '<td class="text-center">' + $(this).children("問題類別_V").text().trim() + '</td>';
                         tabstr += '<td class="text-center" nowrap="nowrap">' + $(this).children("員工編號").text().trim() + '</td>';
                         tabstr += '<td class="text-center" nowrap="nowrap">' + $(this).children("填表人").text().trim() + '</td>';
                         tabstr += '<td class="text-center" nowrap="nowrap">' + $(this).children("部門").text().trim() + '</td>';
                         tabstr += '<td class="text-center" nowrap="nowrap">' + getDate($(this).children("提出日期").text().trim()) + '</td>';
                         tabstr += '<td class="text-center" nowrap="nowrap">' + $(this).children("程度_V").text().trim() + '</td>';
-                        tabstr += '<td class="" nowrap="nowrap">' + $(this).children("內容").text().trim() + '</td>';
-                        tabstr += '<td class="text-center" ><a name="filesbtn" href="javascript:void(0);" aid="' + $(this).children("guid").text().trim() +
-                            '">附件列表</a></td>';
-                        tabstr += '<td class="text-center" nowrap="nowrap">';
-                        if ($("#SSOempid").val() == $(this).children("員工編號").text().trim())
-                            tabstr += '<a href="javascript:void(0);" name="commenteditbtn" atype="edit" aid="' + $(this).children("guid").text().trim() + '">編輯</a>&nbsp;&nbsp;';
-                        else
-                            tabstr += '<a href="javascript:void(0);" name="commenteditbtn" atype="view" aid="' + $(this).children("guid").text().trim() + '">瀏覽</a>&nbsp;&nbsp;';
-                        tabstr += '</td>';
-                        if ($("IsManager", data).text() == "Y") {
-                            if ($("#SSOempid").val() == $(this).children("員工編號").text().trim()) {
-                                tabstr += '<td class="text-center" nowrap="nowrap">';
-                                tabstr += '<a href="javascript:void(0);" name="replyeditbtn" atype="edit" aid="' + $(this).children("guid").text().trim() + '">編輯</a>&nbsp;&nbsp;';
-                                tabstr += '</td>';
-                            }
-                            else {
-                                tabstr += '<td class="text-center" nowrap="nowrap">';
-                                tabstr += '<a href="javascript:void(0);" name="replyeditbtn" atype="view" aid="' + $(this).children("guid").text().trim() + '">瀏覽</a>&nbsp;&nbsp;';
-                                tabstr += '</td>';
-                            }
-                        }
-                        else {
-                            tabstr += '<td class="text-center" nowrap="nowrap">';
-                            tabstr += '<a href="javascript:void(0);" name="replyeditbtn" aid="' + $(this).children("guid").text().trim() + '">瀏覽</a>&nbsp;&nbsp;';
-                            tabstr += '</td>';
-                        }
+                        //tabstr += '<td class="text-center" ><a name="filesbtn" href="javascript:void(0);" aid="' + $(this).children("guid").text().trim() +
+                        //    '" class="btn btn-outline-primary btn-sm text-nowrap">附件列表</a></td>';
                     });
                 }
                 else {
-                    tabstr += '<tr><td colspan="14">查詢無資料</td></tr>';
+                    tabstr += '<tr><td colspan="13">查詢無資料</td></tr>';
                 }
-
                 $("#sp_count").html($("total", data).text());
                 $("#tablist tbody").append(tabstr);
 
                 Page.Option.Selector = "#pageblock";
                 Page.CreatePage(p, $("total", data).text());
+
+                //固定頁面上內容圖片的長寬
+                $(".img-responsive").css({
+                    'width': '250px',
+                    'height': '200px'
+                });
             }
         }
     });
@@ -925,15 +1002,46 @@ function getDataFile(ftype, tablename) {
                 if ($(data).find("data_item").length > 0) {
                     $(data).find("data_item").each(function (i) {
                         tabstr += '<tr>'
-                        tabstr += '<td nowrap><a href="../DOWNLOAD.aspx?type=' + ftype + '&fsn=' + $(this).children("排序").text().trim() + '&v=' + $(this).children("EncodeGuid").text().trim() + '">' + $(this).children("原檔名").text().trim() + $(this).children("附檔名").text().trim() + '</a></td>';
-                        tabstr += '<td nowrap>' + $(this).children("上傳日期").text().trim() + '</td>';
-                        //tabstr += '<td name="td_edit2" nowrap="" align="center"><a href="javascript:void(0);" name="delbtn2" ftype=' + ftype + ' fsn=' + $(this).children("排序").text().trim() + ' aid="' + $(this).children("guid").text().trim() + '">刪除</a></td>';
+                        tabstr += '<td class="text-center" nowrap="nowrap"><a href="../DOWNLOAD.aspx?type=' + ftype + '&fsn=' + $(this).children("排序").text().trim() + '&v=' + $(this).children("EncodeGuid").text().trim() + '">' + $(this).children("原檔名").text().trim() + $(this).children("附檔名").text().trim() + '</a></td>';
+                        tabstr += '<td class="text-center" nowrap="nowrap">' + $(this).children("上傳日期").text().trim() + '</td>';
+                        if ($("#SSOempid").val() == 'laputa') {
+                            tabstr += '<td class="text-center" nowrap="nowrap" name="td_edit2"><a href="javascript:void(0);" name="delbtn2" ftype=' + ftype + ' fsn=' + $(this).children("排序").text().trim() + ' aid="' + $(this).children("guid").text().trim() + '">刪除</a></td>';
+                        }
+                        else {
+                            if ($("#SSOempid").val() == $(this).children("建立者id").text().trim())
+                                tabstr += '<td class="text-center" nowrap="nowrap" name="td_edit2"><a href="javascript:void(0);" name="delbtn2" ftype=' + ftype + ' fsn=' + $(this).children("排序").text().trim() + ' aid="' + $(this).children("guid").text().trim() + '">刪除</a></td>';
+                            else
+                                tabstr += '<td></td>';
+                        }
                         tabstr += '</tr>';
                     });
                 }
                 else
                     tabstr += '<tr><td colspan="3">查詢無資料</td></tr>';
                 $("#" + tablename + " tbody").append(tabstr);
+
+                //if ($("#SSOempid").val() == 'laputa') {
+                //    $("#th_file").show();
+                //    $("#th_file2").show();
+                //}
+                //else {
+                //    if ($("#SSOempid").val() == $(this).children("建立者id").text().trim()) {
+                //        if (ftype == '01') {
+                //            $("#th_file").show();
+                //        }
+                //        else {
+                //            $("#th_file2").show();
+                //        }
+                //    }
+                //    else {
+                //        if (ftype == '01') {
+                //            $("#th_file").hide();
+                //        }
+                //        else {
+                //            $("#th_file2").hide();
+                //        }
+                //    }
+                //}
             }
         }
     });
@@ -968,6 +1076,28 @@ function ValidDate(str) {
         }
     }
     return status;
+}
+
+function base64ToBlob(base64Data, contentType) {
+    contentType = contentType || '';
+    var sliceSize = 10240;
+    var byteCharacters = atob(base64Data);
+    var byteArrays = [];
+
+    for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        var slice = byteCharacters.slice(offset, offset + sliceSize);
+        var byteNumbers = new Array(slice.length);
+
+        for (var i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        var byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+
+    var blob = new Blob(byteArrays, { type: contentType });
+    return blob;
 }
 
 function getDate(fulldate) {

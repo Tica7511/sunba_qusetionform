@@ -14,7 +14,7 @@ public partial class handler_AddQuestionForm : System.Web.UI.Page
 {
     FileTable_DB fdb = new FileTable_DB();
     QuestionForm_DB qdb = new QuestionForm_DB();
-    //QuestionFormLog_DB qldb = new QuestionFormLog_DB();
+    QuestionFormLog_DB qldb = new QuestionFormLog_DB();
     //Admin_DB adb = new Admin_DB();
     CodeTable_DB cdb = new CodeTable_DB();
     SendMail send_mail = new SendMail();
@@ -41,6 +41,13 @@ public partial class handler_AddQuestionForm : System.Web.UI.Page
 
         try
         {
+            #region Check Session Timeout
+            if (!LogInfo.isLogin)
+            {
+                throw new Exception("登入帳號已失效，請重新登入");
+            }
+            #endregion
+
             string guid = (string.IsNullOrEmpty(Request["guid"])) ? "" : Request["guid"].ToString().Trim();
             string num = (string.IsNullOrEmpty(Request["num"])) ? "" : Request["num"].ToString().Trim();
             string questionType = (string.IsNullOrEmpty(Request["questionType"])) ? "" : Request["questionType"].ToString().Trim();
@@ -129,13 +136,13 @@ public partial class handler_AddQuestionForm : System.Web.UI.Page
 
                 qdb.InsertData(oConn, myTrans);
 
-                //qldb._類別 = "新增";
-                //qldb._儲存類別 = "填表人";
-                //qldb._填表人 = Server.UrlDecode(fillformname);
-                //qldb._儲存內容 = Server.UrlDecode(orgnization) + Server.UrlDecode(day)
-                //    + Server.UrlDecode(rtype) + Server.UrlDecode(nContent) + item + sn + DateTime.Now.Year.ToString() + "-" + nMonth + "-" + sn;
-                //
-                //qldb.InsertData(oConn, myTrans);
+                qldb._類別 = "新增";
+                qldb._儲存類別 = "填表人";
+                qldb._填表人 = Server.UrlDecode(fillformname);
+                qldb._儲存內容 = Server.UrlDecode(orgnization) + Server.UrlDecode(day)
+                    + Server.UrlDecode(rtype) + Server.UrlDecode(nContent) + item + sn + DateTime.Now.Year.ToString() + "-" + nMonth + "-" + sn;
+                
+                qldb.InsertData(oConn, myTrans);
 
                 cdb._群組代碼 = "001";
                 cdb._項目代碼 = Server.UrlDecode(questionType);
@@ -168,7 +175,7 @@ public partial class handler_AddQuestionForm : System.Web.UI.Page
 
                 string Subject = "提問單填表人員問題新增通知";
 
-                mailContent = "系統通知:<br><br>線上提問單系統已有同仁新增問題，請上 <a href = 'https://powersunba.com.tw/SunBa_Question/index.aspx'>線上提問單系統</a>";
+                mailContent = "系統通知:<br><br>線上提問單系統已有同仁新增問題，請上 <a href = 'https://powersunba.com.tw/SunBa_Question/WebPage/index.aspx'>線上提問單系統</a>";
                 mailContent += " 進行檢視並確認問題內容，以下為問題詳細資料，感謝您<br>";
                 mailContent += "編號: " + DateTime.Now.Year.ToString() + "-" + nMonth + "-" + sn + "<br/>問題類別:" + questionTypeName + "<br/>填表人: " + Server.UrlDecode(fillformname) +
                     "<br/>提出日期: " + day_v + "<br/>急迫性: " + rtype_v + "<br/>問題描述: " + Server.UrlDecode(nContent);
@@ -180,13 +187,13 @@ public partial class handler_AddQuestionForm : System.Web.UI.Page
                 qdb._修改者id = LogInfo.empNo;
                 qdb.UpdateData(oConn, myTrans);
 
-                //qldb._類別 = "編輯";
-                //qldb._儲存類別 = "填表人員";
-                //qldb._填表人 = Server.UrlDecode(fillformname);
-                //qldb._儲存內容 = Server.UrlDecode(orgnization) + Server.UrlDecode(day)
-                //    + Server.UrlDecode(rtype) + Server.UrlDecode(nContent);
-                //
-                //qldb.InsertData(oConn, myTrans);
+                qldb._類別 = "編輯";
+                qldb._儲存類別 = "填表人員";
+                qldb._填表人 = Server.UrlDecode(fillformname);
+                qldb._儲存內容 = Server.UrlDecode(orgnization) + Server.UrlDecode(day)
+                    + Server.UrlDecode(rtype) + Server.UrlDecode(nContent);
+
+                qldb.InsertData(oConn, myTrans);
             }
 
 
