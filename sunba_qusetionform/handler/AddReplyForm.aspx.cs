@@ -100,62 +100,91 @@ public partial class handler_AddReplyForm : System.Web.UI.Page
                 mode = "new";
             }
 
-            if (mode == "new")
+            qdb._guid = guid;
+            qdt = qdb.GetData();
+
+            if (qdt.Rows.Count > 0)
             {
-                rdb._回覆日期 = Server.UrlDecode(returnday);
-                rdb._建立者 = LogInfo.empName;
-                rdb._建立者id = LogInfo.empNo;
-                rdb._修改者 = LogInfo.empName;
-                rdb._修改者id = LogInfo.empNo;
+                day = qdt.Rows[0]["提出日期"].ToString().Trim();
 
-                rdb.InsertData(oConn, myTrans);
+                cdb._群組代碼 = "001";
+                cdb._項目代碼 = qdt.Rows[0]["問題類別"].ToString().Trim();
+                DataTable qcdt = cdb.GetList();
 
-                qldb._類別 = "新增";
-                qldb._儲存類別 = "回覆人員";
-                qldb._填表人 = Server.UrlDecode(fillformname);
-                qldb._儲存內容 = Server.UrlDecode(returnday) + Server.UrlDecode(finishday) + Server.UrlDecode(state)
-                    + Server.UrlDecode(nContent);
-                qldb.InsertData(oConn, myTrans);
-
-                qdb._guid = guid;
-                qdt = qdb.GetData();
-
-                if (qdt.Rows.Count > 0)
+                if (qcdt.Rows.Count > 0)
                 {
-                    day = qdt.Rows[0]["提出日期"].ToString().Trim();
+                    questionTypeName = qcdt.Rows[0]["項目名稱"].ToString().Trim();
+                }
 
-                    cdb._群組代碼 = "001";
-                    cdb._項目代碼 = qdt.Rows[0]["問題類別"].ToString().Trim();
-                    DataTable qcdt = cdb.GetList();
+                cdb._群組代碼 = "002";
+                cdb._項目代碼 = qdt.Rows[0]["問題類別"].ToString().Trim();
+                adt = cdb.GetList();
 
-                    if (qcdt.Rows.Count > 0)
+                if (adt.Rows.Count > 0)
+                {
+                    ccMail = adt.Rows[0]["項目名稱"].ToString().Trim();
+                }
+
+                cdb._群組代碼 = "005";
+                cdb._項目代碼 = qdt.Rows[0]["程度"].ToString().Trim();
+                dt = cdb.GetList();
+
+                if (dt.Rows.Count > 0)
+                {
+                    rtype_v = dt.Rows[0]["項目名稱"].ToString().Trim();
+                }
+
+                string day_v = string.IsNullOrEmpty(day) ? "" : day.Substring(0, 4) + "/" + day.Substring(4, 2) + "/" + day.Substring(6, 2);
+
+                if (mode == "new")
+                {
+                    rdb._回覆日期 = Server.UrlDecode(returnday);
+                    rdb._建立者 = LogInfo.empName;
+                    rdb._建立者id = LogInfo.empNo;
+                    rdb._修改者 = LogInfo.empName;
+                    rdb._修改者id = LogInfo.empNo;
+
+                    rdb.InsertData(oConn, myTrans);
+
+                    qldb._類別 = "新增";
+                    qldb._儲存類別 = "回覆人員";
+                    qldb._填表人 = Server.UrlDecode(fillformname);
+                    qldb._儲存內容 = Server.UrlDecode(returnday) + Server.UrlDecode(finishday) + Server.UrlDecode(state)
+                        + Server.UrlDecode(nContent);
+                    qldb.InsertData(oConn, myTrans);
+
+                    string Subject = "提問單回覆人員問題回覆新增通知";
+
+                    mailContent = "系統通知:<br><br>線上提問單系統之問題已有新增回覆，請上 <a href = 'https://powersunba.com.tw/SunBa_Question/WebPage/index.aspx'>線上提問單系統</a>";
+                    mailContent += " 進行檢視並確認問題回覆之內容，以下為問題回覆之詳細資料，感謝您<br>";
+                    mailContent += "編號: " + qdt.Rows[0]["編號"].ToString().Trim() + "<br/>問題類別:" + questionTypeName + "<br/>填表人: " + qdt.Rows[0]["填表人"].ToString().Trim() +
+                        "<br/>提出日期: " + day_v + "<br/>急迫性: " + rtype_v + "<br/>問題描述: " + qdt.Rows[0]["內容"].ToString().Trim() + "<br/>回覆內容: " + Server.UrlDecode(nContent);
+
+                    sdb._帳號 = qdt.Rows[0]["員工編號"].ToString().Trim();
+                    sdt = sdb.GetListByEmpid();
+
+                    if (sdt.Rows.Count > 0)
                     {
-                        questionTypeName = qcdt.Rows[0]["項目名稱"].ToString().Trim();
+                        mailTo = sdt.Rows[0]["EMAIL"].ToString().Trim();
+                        send_mail.MailTo(mailTo, ccMail, Subject, mailContent);
                     }
+                }
+                else
+                {
+                    rdb._修改者 = LogInfo.empName;
+                    rdb._修改者id = LogInfo.empNo;
+                    rdb.UpdateData(oConn, myTrans);
 
-                    cdb._群組代碼 = "002";
-                    cdb._項目代碼 = qdt.Rows[0]["問題類別"].ToString().Trim();
-                    adt = cdb.GetList();
+                    qldb._類別 = "編輯";
+                    qldb._儲存類別 = "回覆人員";
+                    qldb._填表人 = Server.UrlDecode(fillformname);
+                    qldb._儲存內容 = Server.UrlDecode(returnday) + Server.UrlDecode(finishday) + Server.UrlDecode(state)
+                        + Server.UrlDecode(nContent);
+                    qldb.InsertData(oConn, myTrans);
 
-                    if (adt.Rows.Count > 0)
-                    {
-                        ccMail = adt.Rows[0]["項目名稱"].ToString().Trim();
-                    }
+                    string Subject = "提問單回覆人員問題回覆更新通知";
 
-                    cdb._群組代碼 = "005";
-                    cdb._項目代碼 = qdt.Rows[0]["程度"].ToString().Trim();
-                    dt = cdb.GetList();
-
-                    if (dt.Rows.Count > 0)
-                    {
-                        rtype_v = dt.Rows[0]["項目名稱"].ToString().Trim();
-                    }
-
-                    string day_v = string.IsNullOrEmpty(day) ? "" : day.Substring(0, 4) + "/" + day.Substring(4, 2) + "/" + day.Substring(6, 2);
-
-                    string Subject = "提問單回覆人員問題回覆通知";
-
-                    mailContent = "系統通知:<br><br>線上提問單系統之問題已有回覆，請上 <a href = 'https://powersunba.com.tw/SunBa_Question/WebPage/index.aspx'>線上提問單系統</a>";
+                    mailContent = "系統通知:<br><br>線上提問單系統之問題已有更新回覆，請上 <a href = 'https://powersunba.com.tw/SunBa_Question/WebPage/index.aspx'>線上提問單系統</a>";
                     mailContent += " 進行檢視並確認問題回覆之內容，以下為問題回覆之詳細資料，感謝您<br>";
                     mailContent += "編號: " + qdt.Rows[0]["編號"].ToString().Trim() + "<br/>問題類別:" + questionTypeName + "<br/>填表人: " + qdt.Rows[0]["填表人"].ToString().Trim() +
                         "<br/>提出日期: " + day_v + "<br/>急迫性: " + rtype_v + "<br/>問題描述: " + qdt.Rows[0]["內容"].ToString().Trim() + "<br/>回覆內容: " + Server.UrlDecode(nContent);
@@ -170,20 +199,6 @@ public partial class handler_AddReplyForm : System.Web.UI.Page
                     }
                 }
             }
-            else
-            {
-                rdb._修改者 = LogInfo.empName;
-                rdb._修改者id = LogInfo.empNo;
-                rdb.UpdateData(oConn, myTrans);
-
-                qldb._類別 = "編輯";
-                qldb._儲存類別 = "回覆人員";
-                qldb._填表人 = Server.UrlDecode(fillformname);
-                qldb._儲存內容 = Server.UrlDecode(returnday) + Server.UrlDecode(finishday) + Server.UrlDecode(state)
-                    + Server.UrlDecode(nContent);
-                qldb.InsertData(oConn, myTrans);
-            }
-
 
             // 檔案上傳
             HttpFileCollection uploadFiles = Request.Files;

@@ -35,12 +35,19 @@
 	<script type="text/javascript" src="<%= ResolveUrl("~/js/bootstrap.bundle.min.js") %>"></script>
 	<script type="text/javascript" src="<%= ResolveUrl("~/js/metisMenu.min.js") %>"></script><!-- mobile menu -->
 	<script type="text/javascript" src="<%= ResolveUrl("~/js/multiple-select.min.js") %>"></script>
+	<script type="text/javascript" src="<%= ResolveUrl("~/js/bootstrap-table.min.js") %>"></script>
+	<script type="text/javascript" src="<%= ResolveUrl("~/js/bootstrap-table-fixed-columns.min.js") %>"></script>
 
 	<!--MyJS-->
 	<script type="text/javascript" src="<%= ResolveUrl("~/page_js/MasterMenu.js") %>"></script>
 	<%--<script type="text/javascript" src="<%= ResolveUrl("~/page_js/FormFlow.js") %>"></script>--%>
 	<script type="text/javascript" src="<%= ResolveUrl("~/js/NickCommon.js") %>"></script>
 	<script type="text/javascript" src="<%= ResolveUrl("~/js/PageList.js") %>"></script>
+	<script type="text/javascript">
+		$(document).ready(function () {
+            //$("#page-content-wrapper").css("max-width", "1800px");
+		});
+    </script>
 	<asp:ContentPlaceHolder ID="head" runat="server"></asp:ContentPlaceHolder>
 </head>
 <body class="bodybgcolor">

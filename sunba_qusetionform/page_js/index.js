@@ -1,9 +1,21 @@
 ﻿$(document).ready(function () {
+    var ckclosedvalue = '';
     getDDL('001', '', 'sel_questionType');
     getCompanyList("orgnization", "");
     getCompanyList("empname", "");
     getDDL2('005', '', 'div_type');
     getDDL('004', '', 'sel_state');
+    $("input[name='ck_isclosed'][value='Y']").prop("checked", true);
+    $("input[name='ck_isclosed'][value='']").prop("checked", true);
+    $('input[name="ck_isclosed"]:checked').each(function () {
+        if (ckclosedvalue == "") {
+            ckclosedvalue += this.value;
+        }
+        else {
+            ckclosedvalue += "," + this.value;
+        }
+    });
+    $("#Misclosed").val(ckclosedvalue);
     getData(0);
 
     //tinymce
@@ -143,6 +155,7 @@
     //查詢按鈕
     $(document).on("click", "#querybtn", function () {
         var cktypevalue = '';
+        var ckclosedvalue = '';
 
         $("#Mitem").val($("#txt_item").val());
         $("#Mnum").val($("#txt_num").val());
@@ -163,13 +176,26 @@
             }
 
         });
-
         $("#Mtype").val(cktypevalue);
+        $('input[name="ck_isclosed"]:checked').each(function () {
+            if (ckclosedvalue == "") {
+                ckclosedvalue += this.value;
+            }
+            else {
+                ckclosedvalue += "," + this.value;
+            }
+        });
+        $("#Misclosed").val(ckclosedvalue);
         $("#Mcontent").val($("#txt_content").val());
         $("#Mreplycontent").val($("#txt_replycontent").val());
 
         getData(0);
     });
+
+    //匯出按鈕
+    //$(document).on("click", "#exportbtn", function () {
+    //    location.href("")
+    //});
 
     //清除按鈕
     $(document).on("click", "#clearbtn", function () {
@@ -180,6 +206,8 @@
         getCompanyList('empname', '')
         $("#sel_empid").val('');
         getDDL2('005', '', 'div_type');
+        $("input[name='ck_isclosed'][value='Y']").prop("checked", true);
+        $("input[name='ck_isclosed'][value='']").prop("checked", true);
         $("#sel_state").val('');
         $("#txt_startday").val('');
         $("#txt_endday").val('');
@@ -209,7 +237,7 @@
                     var ddlstr = '<option value=""> -- 請選擇 -- </option>';
                     if ($(data).find("data_item").length > 0) {
                         $(data).find("data_item").each(function (i) {
-                            ddlstr += '<option value="' + $(this).children("編號").text().trim() + '">' + $(this).children("編號").text().trim() + ' ' + $(this).children("姓名").text().trim() + '</option>';
+                            ddlstr += '<option value="' + $(this).children("帳號").text().trim() + '">' + $(this).children("帳號").text().trim() + ' ' + $(this).children("姓名").text().trim() + '</option>';
                         });
                     }
 
@@ -233,6 +261,7 @@
         $("#Qguid").val('');
         $("#ntxt_file").val('');
         $("#ffGuid").val('');
+        $("input[name='ckisclosed']").prop("checked", false);
         getDataFile('01', 'tablistfile');
 
         $("#ntxt_num").attr("disabled", true);
@@ -240,6 +269,7 @@
         $("#ntxt_day").attr("disabled", true);
         $("#ntxt_file").show();
         $("#n_subbtn").show();
+        $("#div_isclosed").hide();
 
         $(".newstr").val("");
         $("#FileList").empty();
@@ -274,6 +304,8 @@
             $("#div_commenttinymce").show();
             $("#div_commentdiv").hide();
             $("#n_subbtn").show();
+            $("#div_isclosed").show();
+            $("input[name='ckisclosed']").attr("disabled", false);
         }
         else {
             $("#nsel_type").attr("disabled", true);
@@ -281,6 +313,8 @@
             $("#div_commenttinymce").hide();
             $("#div_commentdiv").show();
             $("#n_subbtn").hide();
+            $("#div_isclosed").show();
+            $("input[name='ckisclosed']").attr("disabled", true);
         }
 
         $("#CommentModal").modal("show");
@@ -296,7 +330,8 @@
         $("#ntxt_returnday").val(getTaiwanDate());
         $("#ntxt_finishday").val('');
         $("#nsel_state").val('');
-        $("#ck_contract").prop("checked", false);
+        //$("#ck_contract").prop("checked", false);
+        $("input[name='ckcontract'][value='']").prop("checked", true);
         $("#div_reply").empty();
         $("#div_reply").append('');
         $("#ffGuid").val($(this).attr("aid"));
@@ -306,7 +341,8 @@
         if ($(this).attr("atype") == 'edit') {
             $("#ntxt_finishday").attr("disabled", false);
             $("#nsel_state").attr("disabled", false);
-            $("#ck_contract").attr("disabled", false);
+            //$("#ck_contract").attr("disabled", false);
+            $("input[name='ckcontract']").attr("disabled", false);
             $("#ntxt_file2").show();
             $("#div_replytinymce").show();
             $("#div_replydiv").hide();
@@ -315,7 +351,8 @@
         else {
             $("#ntxt_finishday").attr("disabled", true);
             $("#nsel_state").attr("disabled", true);
-            $("#ck_contract").attr("disabled", true);
+            //$("#ck_contract").attr("disabled", true);
+            $("input[name='ckcontract']").attr("disabled", true);
             $("#ntxt_file2").hide();
             $("#div_replytinymce").hide();
             $("#div_replydiv").show();
@@ -366,6 +403,11 @@
         data.append("day", encodeURIComponent(insertsqlDate($("#ntxt_day").val())));
         data.append("rtype", encodeURIComponent($("#nsel_type").val()));
         data.append("nContent", encodeURIComponent(content_tmp));
+        var ckisclosedvalue = ''
+        $('input[name="ckisclosed"]:checked').each(function () {
+            ckisclosedvalue = $(this).val();
+        });
+        data.append("ckisclosed", encodeURIComponent(ckisclosedvalue));
         $.each($("#ntxt_file")[0].files, function (i, file) {
             data.append('file', file);
         });
@@ -427,17 +469,18 @@
         data.append("finishday", encodeURIComponent(insertsqlDate($("#ntxt_finishday").val())));
         data.append("state", encodeURIComponent($("#nsel_state option:selected").val()));
         data.append("mode", encodeURIComponent(mode));
-        var ckcontractvalue = ''
-        $('input[name="ckcontract"]:checked').each(function () {
-            if (ckcontractvalue == "") {
-                ckcontractvalue += this.value;
-            }
-            else {
-                ckcontractvalue += "," + this.value;
-            }
-
-        });
-        data.append("ckcontract", encodeURIComponent(ckcontractvalue));
+        //var ckcontractvalue = ''
+        //$('input[name="ckcontract"]:checked').each(function () {
+        //    if (ckcontractvalue == "") {
+        //        ckcontractvalue += this.value;
+        //    }
+        //    else {
+        //        ckcontractvalue += "," + this.value;
+        //    }
+        //
+        //});
+        //data.append("ckcontract", encodeURIComponent(ckcontractvalue));
+        data.append("ckcontract", encodeURIComponent($('input[name="ckcontract"]:checked').val()));
         data.append("nContent", encodeURIComponent(content_tmp));
         $.each($("#ntxt_file2")[0].files, function (i, file) {
             data.append('file2', file);
@@ -514,6 +557,20 @@
     // 排序 編號 desc
     $(document).on("click", "#d_numDesc", function () {
         $("#tmporderby").val("編號");
+        $("#tmpsortby").val("desc");
+        getData(0);
+    });
+
+    // 排序 是否結案 asc
+    $(document).on("click", "#d_isclosedAsc", function () {
+        $("#tmporderby").val("是否結案");
+        $("#tmpsortby").val("asc");
+        getData(0);
+    });
+
+    // 排序 是否結案 desc
+    $(document).on("click", "#d_isclosedDesc", function () {
+        $("#tmporderby").val("是否結案");
         $("#tmpsortby").val("desc");
         getData(0);
     });
@@ -652,6 +709,7 @@ function getData(p) {
             content: $("#Mcontent").val(),
             replycontent: $("#Mreplycontent").val(),
             urgency: $("#Mtype").val(),
+            isclosed: $("#Misclosed").val(),
             SortName: $("#tmporderby").val(),
             SortMethod: $("#tmpsortby").val()
         },
@@ -676,7 +734,12 @@ function getData(p) {
                         tabstr += '<td class="text-center" nowrap="nowrap">';
                         //管理者僅能瀏覽填表內容(lapua除外)，森霸人員可以編輯自己的填表內容不是自己的僅能編輯
                         if ($("IsManager", data).text() == "Y") {
-                            tabstr += '<a href="javascript:void(0);" style="text-decoration: underline;" name="commenteditbtn" atype="view" aid="' + $(this).children("guid").text().trim() + '">' + $(this).children("編號").text().trim() + '</a>';
+                            if ($("#SSOempid").val() == 'laputa') {
+                                tabstr += '<a href="javascript:void(0);" style="text-decoration: underline;" name="commenteditbtn" atype="edit" aid="' + $(this).children("guid").text().trim() + '">' + $(this).children("編號").text().trim() + '</a>';
+                            }
+                            else {
+                                tabstr += '<a href="javascript:void(0);" style="text-decoration: underline;" name="commenteditbtn" atype="view" aid="' + $(this).children("guid").text().trim() + '">' + $(this).children("編號").text().trim() + '</a>';
+                            }                            
                         }
                         else {
                             if ($("#SSOempid").val() == $(this).children("員工編號").text().trim())
@@ -685,7 +748,14 @@ function getData(p) {
                                 tabstr += '<a href="javascript:void(0);" style="text-decoration: underline;" name="commenteditbtn" atype="view" aid="' + $(this).children("guid").text().trim() + '">' + $(this).children("編號").text().trim() + '</a>';
                         }
                         tabstr += '</td>';
+                        if ($(this).children("是否結案").text().trim() == 'Y') {
+                            tabstr += '<td class="text-center"><span style="color:red">已結案</span></td>';
+                        }
+                        else {
+                            tabstr += '<td class="text-center">尚未結案</td>';
+                        }
                         tabstr += '<td class="">' + $(this).children("內容").text().trim() + '</td>';
+                        tabstr += '<td class="">' + $(this).children("回覆內容R").text().trim() + '</td>';
                         //管理者僅能編輯回覆內容(lapua除外)
                         if ($("IsManager", data).text() == "Y") {
                             if ($("#SSOempid").val() == 'laputa') {
@@ -715,7 +785,7 @@ function getData(p) {
                             tabstr += '</td>';
                         }
                         tabstr += '<td class="text-center">' + $(this).children("問題類別_V").text().trim() + '</td>';
-                        tabstr += '<td class="text-center" nowrap="nowrap">' + $(this).children("員工編號").text().trim() + '</td>';
+                        //tabstr += '<td class="text-center" nowrap="nowrap">' + $(this).children("員工編號").text().trim() + '</td>';
                         tabstr += '<td class="text-center" nowrap="nowrap">' + $(this).children("填表人").text().trim() + '</td>';
                         tabstr += '<td class="text-center" nowrap="nowrap">' + $(this).children("部門").text().trim() + '</td>';
                         tabstr += '<td class="text-center" nowrap="nowrap">' + getDate($(this).children("提出日期").text().trim()) + '</td>';
@@ -770,6 +840,10 @@ function getData2() {
                         $("#ntxt_fillformname").val($(this).children("填表人").text().trim());
                         $("#ntxt_day").val(getDate($(this).children("提出日期").text().trim()));
                         $("#nsel_type").val($(this).children("程度").text().trim());
+                        if ($(this).children("是否結案").text().trim() == 'Y')
+                            $("input[name='ckisclosed']").prop("checked", true);
+                        else
+                            $("input[name='ckisclosed']").prop("checked", false);
                         var editor = tinymce.get('n_suggestion');
                         editor.setContent($(this).children("內容").text().trim());
                         $("#n_suggestion").val($(this).children("內容").text().trim());
@@ -818,10 +892,18 @@ function getData3() {
                         $("#ntxt_returnday").val(getDate($(this).children("回覆日期").text().trim()));
                         $("#ntxt_finishday").val(getDate($(this).children("預計完成日").text().trim()));
                         $("#nsel_state").val($(this).children("目前狀態").text().trim());
-                        if ($(this).children("需求是否在第一期合約中").text().trim() == 'Y')
-                            $("#ck_contract").prop("checked", true);
-                        else
-                            $("#ck_contract").prop("checked", false);
+                        //if ($(this).children("需求是否在第一期合約中").text().trim() == 'Y')
+                        //    $("#ck_contract").prop("checked", true);
+                        //else
+                        //    $("#ck_contract").prop("checked", false);
+                        if ($(this).children("需求是否在第一期合約中").text().trim() == 'Y') {
+                            $("input[name='ckcontract'][value='Y']").prop("checked", false);
+                            $("input[name='ckcontract'][value='']").prop("checked", true);
+                        }
+                        else {
+                            $("input[name='ckcontract'][value='Y']").prop("checked", true);
+                            $("input[name='ckcontract'][value='']").prop("checked", false);
+                        }
                         var editor = tinymce.get('n_replies');
                         editor.setContent($(this).children("回覆內容").text().trim());
                         $("#n_replies").val($(this).children("回覆內容").text().trim());
@@ -934,7 +1016,7 @@ function getCompanyList(type, orgnization) {
                             ddlstr += '<option value="' + $(this).children("GROUP_ID").text().trim() + '">' + $(this).children("GROUP_NAME").text().trim() + '</option>';
                         }
                         else {
-                            ddlstr += '<option value="' + $(this).children("編號").text().trim() + '">' + $(this).children("編號").text().trim() + ' ' + $(this).children("姓名").text().trim() + '</option>';
+                            ddlstr += '<option value="' + $(this).children("帳號").text().trim() + '">' + $(this).children("帳號").text().trim() + ' ' + $(this).children("姓名").text().trim() + '</option>';
                         }
                     });
                 }

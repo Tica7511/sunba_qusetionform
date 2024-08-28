@@ -10,6 +10,7 @@ using System.Data;
 public partial class handler_GetQestionForm : System.Web.UI.Page
 {
     QuestionForm_DB db = new QuestionForm_DB();
+    Reply_DB rdb = new Reply_DB();
     Competence_DB cdb = new Competence_DB();
     FileTable_DB fdb = new FileTable_DB();
     protected void Page_Load(object sender, EventArgs e)
@@ -50,6 +51,7 @@ public partial class handler_GetQestionForm : System.Web.UI.Page
             string content = (string.IsNullOrEmpty(Request["content"])) ? "" : Request["content"].ToString().Trim();
             string replycontent = (string.IsNullOrEmpty(Request["replycontent"])) ? "" : Request["replycontent"].ToString().Trim();
             string rtype = string.IsNullOrEmpty(Request["cktype"]) ? "" : Request["cktype"].ToString().Trim();
+            string isclosed = string.IsNullOrEmpty(Request["isclosed"]) ? "" : Request["isclosed"].ToString().Trim();
             string type = (string.IsNullOrEmpty(Request["type"])) ? "" : Request["type"].ToString().Trim();
             string urgency = (string.IsNullOrEmpty(Request["urgency"])) ? "" : Request["urgency"].ToString().Trim();
             string SortName = (string.IsNullOrEmpty(Request["SortName"])) ? "" : Common.FilterCheckMarxString(Request["SortName"].ToString().Trim());
@@ -65,15 +67,33 @@ public partial class handler_GetQestionForm : System.Web.UI.Page
                 db._編號 = num;
                 db._問題類別 = questionType;
                 db._員工編號 = empid;
+                db._部門_id = orgnization;
                 db._程度 = rtype;
                 db._目前狀態 = state;
                 db._內容 = content;
                 db._回覆內容 = replycontent;
                 db._程度 = urgency;
+                db._是否結案 = isclosed;
                 db._排序名稱 = SortName;
                 db._排序狀態 = SortMethod;
 
                 ds = db.GetList(pageStart.ToString(), pageEnd.ToString(), startday, endday);
+                DataTable qdt = ds.Tables[1];
+
+                if (qdt.Rows.Count > 0)
+                {
+                    qdt.Columns.Add("回覆內容R", typeof(string));
+                    for (int i = 0; i < qdt.Rows.Count; i++)
+                    {
+                        rdb._guid = qdt.Rows[i]["guid"].ToString().Trim();
+                        DataTable rdt = rdb.GetData();
+
+                        if (rdt.Rows.Count > 0)
+                        {
+                            qdt.Rows[i]["回覆內容R"] = rdt.Rows[0]["回覆內容"].ToString().Trim();
+                        }
+                    }
+                }
 
                 // 管理者權限
                 string Manager = string.Empty;

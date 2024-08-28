@@ -1,8 +1,8 @@
 ﻿@charset "utf-8";
 /*  ===== 基本覆寫 ===== */
 *{font-family:Verdana,微軟正黑體, Microsoft JhengHei, Arial, Helvetica, sans-serif;}
-html,body{height:100%; margin:0; padding:0; overflow-x: hidden;}
-body{font-size: 1em;overflow-x: hidden;}
+html,body{height:100%; margin:0; padding:0; }
+body{font-size: 1em;}
 /* 整頁佈局 */
 #page-content-wrapper{width:100%;}
 #sidebar-wrapper {
@@ -36,3 +36,11 @@ ul.metismenu li ul li ul li a{padding-left: 45px;background: #fff;}
 .bodybgcolor{background: #f2f7f8;}
 .footerbgcolor{background: #dbe7e9;}
 .shadowR{box-shadow: 5px 0 20px -2px rgba(0,0,0,0.1);}
+.scrollbarTopwrapper {
+    overflow-x: scroll;
+    transform: rotateX(180deg);
+}
+
+.scrollbarTop {
+    transform: rotateX(180deg);
+}

@@ -3,13 +3,60 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
     <script type="text/javascript" src="../tinymce/tinymce.min.js"></script>
     <script type="text/javascript" src="../page_js/index.js"></script>
+	<script>
+	  //const tableWrapper = document.querySelector('.scrollable-table-wrapper');
+	  //const scrollbar = document.querySelector('.table-scrollbar');
+	
+	  //scrollbar.addEventListener('scroll', () => {
+	  //  tableWrapper.scrollLeft = scrollbar.scrollLeft;
+	  //});
+	
+	  //tableWrapper.addEventListener('scroll', () => {
+	  //  scrollbar.scrollLeft = tableWrapper.scrollLeft;
+	  //});
+	</script>
 	<style>
-		.modal-dialog{
+		/*.modal-dialog{
 		    overflow-y: initial !important
 		}
 		.modal-body{
 		    height: 600px;
 		    overflow-y: auto;
+		}
+		.scrollable-table-container {
+		  position: relative;
+		  overflow-x: auto;
+		  margin-top: 20px;*/ /* Make sure there is space for the top scrollbar */
+		/*}
+		
+		.scrollable-table-container {
+		  position: relative;
+		  margin-top: 20px;*/ /* Make sure there is space for the top scrollbar */
+		/*}
+
+		.scrollable-table-wrapper {
+		  overflow-x: auto;
+		}
+		
+		.scrollable-table-container .table-scrollbar {
+		  overflow-x: auto;
+		  position: absolute;
+		  top: -20px;*/ /* Position it above the container */
+		  /*left: 0;
+		  width: 100%;
+		  height: 20px;*/ /* Height of the scrollbar */
+		/*}
+		
+		.scrollable-table-container .table-scrollbar div {
+		  width: 200%;*/ /* Width should be enough to enable scrolling */
+		  /*height: 1px;
+		}*/
+		table {
+		  width: 200%; /* Width should match the scrollbar */
+		}
+		.modal-body {
+		  max-height: 70vh; /* 限制模态框内容的高度 */
+		  overflow-y: auto; /* 启用垂直滚动 */
 		}
 	</style>
 </asp:Content>
@@ -25,6 +72,7 @@
     <input type="hidden" id="Mendday" />
     <input type="hidden" id="Mstate" />
     <input type="hidden" id="Mtype" />
+    <input type="hidden" id="Misclosed" />
     <input type="hidden" id="Mcontent" />
     <input type="hidden" id="Mreplycontent" />
     <input type="hidden" id="Fguid" />
@@ -93,7 +141,7 @@
 					<div class="col-md-6">
 						<div class="row flex-md-nowrap align-items-center">
 							<div class="col-md-auto TitleSetWidth text-md-end">
-								<label class="form-label">員工編號</label>
+								<label class="form-label">填表人</label>
 							</div>
 							<div class="col-md-auto flex-grow-1">
 								<div class="selectSetTypeA">
@@ -148,12 +196,26 @@
 						</div>
 					</div>
 				</div>
+				<div class="row gy-2 mt-1 align-items-center OchiRow">
+					<div class="col-md-6">
+						<div class="row flex-md-nowrap align-items-center">
+							<div class="col-md-auto TitleSetWidth text-md-end">
+								<label class="form-label">是否結案</label>
+							</div>
+							<div class="col-md-auto flex-grow-1">
+								<input name="ck_isclosed" type="checkbox" value="Y" /> 是 
+								<input name="ck_isclosed" type="checkbox" value="" /> 否 
+							</div>
+						</div>
+					</div>
+				</div>
             </div>
-            <div class="text-end mt-2">
-                總資料筆數: <span id="sp_count"></span>&nbsp;&nbsp;
-                <a href="javascript:void(0);" id="clearbtn" class="btn btn-primary text-nowrap btn-sm">清除</a>
-                <a href="javascript:void(0);" id="querybtn" class="btn btn-primary text-nowrap btn-sm">查詢</a>
-            </div>
+			<div class="text-end mt-2">
+			    總資料筆數: <span id="sp_count"></span>&nbsp;&nbsp;
+				<%--<a href="javascript:void(0);" id="exportbtn" class="btn btn-primary text-nowrap btn-sm">匯出</a>--%>
+			    <a href="javascript:void(0);" id="clearbtn" class="btn btn-primary text-nowrap btn-sm">清除</a>
+			    <a href="javascript:void(0);" id="querybtn" class="btn btn-primary text-nowrap btn-sm">查詢</a>
+			</div>
         </div>
 
         <div class="row align-items-center justify-content-between mt-3">
@@ -161,22 +223,27 @@
                 <h3 class="fw-bold">查詢結果</h3>
             </div>
             <div class="col-md-auto order-0 order-md-1">
+				<%--<a href="javascript:void(0);" id="exportbtn" class="btn btn-primary text-nowrap btn-sm">匯出</a>--%> 
                 <a href="javascript:void(0);" id="newbtn" class="btn btn-primary text-nowrap btn-sm docShow">新增</a>
             </div>
         </div>
 
-        <div class="mt-1 table-responsive">
+        <div class="mt-1 scrollable-table-container">
             <input id="tmporderby" type="hidden" value="" />
             <input id="tmpsortby" type="hidden" value="" />
-            <table id="tablist" class="table table-bordered table-striped font-size2">
+			<%--<div class="scrollbarTopwrapper">
+			<div class="scrollbarTop">--%>
+				<table id="tablist" class="table table-bordered table-striped font-size2">
                 <thead>
                     <tr class="table-secondary">
                         <th class="text-center" nowrap="">項次</th>
                         <th class="text-center" nowrap="">編號 <a href="javascript:void(0);" id="d_numAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_numDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
-						<th class="text-center" width="15%" nowrap="">內容</th>
-                        <th class="text-center" nowrap="">回覆內容</th>
+                        <th class="text-center" nowrap="">是否結案 <a href="javascript:void(0);" id="d_isclosedAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_isclosedDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
+						<th class="text-center" width="15%" nowrap="">填表內容</th>
+                        <th class="text-center" width="15%" nowrap="">回覆內容</th>
+                        <th class="text-center" nowrap=""></th>
                         <th class="text-center" nowrap="">問題類別 <a href="javascript:void(0);" id="d_questionTypeAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_questionTypeDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
-                        <th class="text-center" nowrap="">員工編號 <a href="javascript:void(0);" id="d_empidAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_empidDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
+                        <%--<th class="text-center" nowrap="">員工編號 <a href="javascript:void(0);" id="d_empidAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_empidDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>--%>
                         <th class="text-center" nowrap="">填表人 <a href="javascript:void(0);" id="d_empNameAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_empNameDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
                         <th class="text-center" nowrap="">部門 <a href="javascript:void(0);" id="d_orgnizationAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_orgnizationDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
                         <th class="text-center" nowrap="">提出日期 <a href="javascript:void(0);" id="d_purposeDateAsc" class="text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="排序AtoZ"><i class="fa-solid fa-arrow-down-short-wide"></i></a><a href="javascript:void(0);" id="d_purposeDateDesc" data-bs-toggle="tooltip" data-bs-placement="top" title="排序ZtoA"><i class="fa-solid fa-arrow-down-wide-short"></i></a></th>
@@ -185,6 +252,8 @@
                 </thead>
                 <tbody></tbody>
             </table>
+			<%--</div>
+			</div>--%>
             <div id="pageblock"></div>
         </div>
     </div>
@@ -274,6 +343,19 @@
 						                            <option value=""> -- 請選擇 -- </option>
 								        	    </select>
 								            </div>
+						    			</div>
+						    		</div>
+						    	</div>
+						    </div>
+
+							<div id="div_isclosed" class="row gy-2 mt-1 align-items-center OchiRow">
+						    	<div class="col-md-6">
+						    		<div class="row flex-md-nowrap align-items-center">
+						    			<div class="col-md-auto TitleSetWidth text-md-end">
+						    				<label class="form-label">是否結案</label>
+						    			</div>
+						    			<div class="col-md-auto flex-grow-1">
+						    				<input name="ckisclosed" value="Y" type="checkbox"> 是
 						    			</div>
 						    		</div>
 						    	</div>
@@ -371,7 +453,9 @@
 						    				<label class="form-label">需求是否在第一期合約中</label>
 						    			</div>
 						    			<div id="div_contract" class="col-md-auto flex-grow-1">
-											<input id="ck_contract" value="Y" type="checkbox" name="ckcontract" /> 是
+											<input type="radio" value="Y" name="ckcontract" /> 是
+											<input type="radio" value="" name="ckcontract" checked /> 否
+											<%--<input id="ck_contract" value="Y" type="checkbox" name="ckcontract" /> 是--%>
 						    			</div>
 						    		</div>
 						    	</div>

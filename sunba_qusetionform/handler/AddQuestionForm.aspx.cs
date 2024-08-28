@@ -53,6 +53,7 @@ public partial class handler_AddQuestionForm : System.Web.UI.Page
             string questionType = (string.IsNullOrEmpty(Request["questionType"])) ? "" : Request["questionType"].ToString().Trim();
             string day = (string.IsNullOrEmpty(Request["day"])) ? "" : Request["day"].ToString().Trim();
             string rtype = (string.IsNullOrEmpty(Request["rtype"])) ? "" : Request["rtype"].ToString().Trim();
+            string ckisclosed = (string.IsNullOrEmpty(Request["ckisclosed"])) ? "" : Request["ckisclosed"].ToString().Trim();
             string nContent = (string.IsNullOrEmpty(Request["nContent"])) ? "" : Request["nContent"].ToString().Trim();
             string mode = (string.IsNullOrEmpty(Request["mode"])) ? "" : Request["mode"].ToString().Trim();
             string tmpGuid = (Server.UrlDecode(mode) == "new") ? Guid.NewGuid().ToString("N") : guid;
@@ -74,11 +75,90 @@ public partial class handler_AddQuestionForm : System.Web.UI.Page
             string mailContent = string.Empty;
             string mailTo = string.Empty;
             string rtype_v = string.Empty;
+            string isclosed_v = string.Empty;
             string questionTypeName = string.Empty;
 
             qdb._guid = tmpGuid;
             qdb._程度 = Server.UrlDecode(rtype);
             qdb._內容 = Server.UrlDecode(nContent);
+            qdb._是否結案 = ckisclosed;
+
+            if(ckisclosed == "Y")
+            {
+                isclosed_v = "已結案";
+            }
+            else
+            {
+                isclosed_v = "尚未結案";
+            }
+
+            if (DateTime.Now.Month.ToString().Length == 1)
+            {
+                nMonth = "0" + DateTime.Now.Month.ToString();
+            }
+            else
+            {
+                nMonth = DateTime.Now.Month.ToString();
+            }
+
+            qdb._年度 = DateTime.Now.Year.ToString();
+            qdb._月份 = nMonth;
+
+            DataTable sndb = qdb.GetSn();
+
+            if (sndb.Rows.Count > 0)
+            {
+                sn = sndb.Rows[0]["序號"].ToString().Trim();
+                if (!string.IsNullOrEmpty(sn))
+                {
+                    sn = (Convert.ToInt32(sn) + 1).ToString();
+                    if (sn.Length < 2)
+                        sn = "0" + sn;
+                }
+                else
+                {
+                    sn = "01";
+                }
+
+            }
+
+            DataTable idt = qdb.GetMaxitem();
+
+            if (idt.Rows.Count > 0)
+            {
+                item = (string.IsNullOrEmpty(idt.Rows[0]["項次"].ToString().Trim())) ? "1" : idt.Rows[0]["項次"].ToString().Trim();
+            }
+
+            cdb._群組代碼 = "001";
+            cdb._項目代碼 = Server.UrlDecode(questionType);
+            DataTable qdt = cdb.GetList();
+
+            if (qdt.Rows.Count > 0)
+            {
+                questionTypeName = qdt.Rows[0]["項目名稱"].ToString().Trim();
+            }
+
+            cdb._群組代碼 = "002";
+            cdb._項目代碼 = Server.UrlDecode(questionType);
+            adt = cdb.GetList();
+
+            if (adt.Rows.Count > 0)
+            {
+                mailTo = adt.Rows[0]["項目名稱"].ToString().Trim();
+            }
+
+            cdb._群組代碼 = "005";
+            cdb._項目代碼 = Server.UrlDecode(rtype);
+            dt = cdb.GetList();
+
+            if (dt.Rows.Count > 0)
+            {
+                rtype_v = dt.Rows[0]["項目名稱"].ToString().Trim();
+            }
+
+            qdb._項次 = item;
+            qdb._序號 = sn;
+            qdb._編號 = DateTime.Now.Year.ToString() + "-" + nMonth + "-" + sn;
 
             if (Server.UrlDecode(mode) == "new")
             {
@@ -93,47 +173,6 @@ public partial class handler_AddQuestionForm : System.Web.UI.Page
                 qdb._修改者 = LogInfo.empName;
                 qdb._修改者id = LogInfo.empNo;
 
-                if (DateTime.Now.Month.ToString().Length == 1)
-                {
-                    nMonth = "0" + DateTime.Now.Month.ToString();
-                }
-                else
-                {
-                    nMonth = DateTime.Now.Month.ToString();
-                }
-
-                qdb._年度 = DateTime.Now.Year.ToString();
-                qdb._月份 = nMonth;
-
-                DataTable sndb = qdb.GetSn();
-
-                if (sndb.Rows.Count > 0)
-                {
-                    sn = sndb.Rows[0]["序號"].ToString().Trim();
-                    if (!string.IsNullOrEmpty(sn))
-                    {
-                        sn = (Convert.ToInt32(sn) + 1).ToString();
-                        if (sn.Length < 2)
-                            sn = "0" + sn;
-                    }
-                    else
-                    {
-                        sn = "01";
-                    }
-
-                }
-
-                DataTable idt = qdb.GetMaxitem();
-
-                if (idt.Rows.Count > 0)
-                {
-                    item = (string.IsNullOrEmpty(idt.Rows[0]["項次"].ToString().Trim())) ? "1" : idt.Rows[0]["項次"].ToString().Trim();
-                }
-
-                qdb._項次 = item;
-                qdb._序號 = sn;
-                qdb._編號 = DateTime.Now.Year.ToString() + "-" + nMonth + "-" + sn;
-
                 qdb.InsertData(oConn, myTrans);
 
                 qldb._類別 = "新增";
@@ -144,33 +183,6 @@ public partial class handler_AddQuestionForm : System.Web.UI.Page
                 
                 qldb.InsertData(oConn, myTrans);
 
-                cdb._群組代碼 = "001";
-                cdb._項目代碼 = Server.UrlDecode(questionType);
-                DataTable qdt = cdb.GetList();
-
-                if (qdt.Rows.Count > 0)
-                {
-                    questionTypeName = qdt.Rows[0]["項目名稱"].ToString().Trim();
-                }
-
-                cdb._群組代碼 = "002";
-                cdb._項目代碼 = Server.UrlDecode(questionType);
-                adt = cdb.GetList();
-
-                if (adt.Rows.Count > 0)
-                {
-                    mailTo = adt.Rows[0]["項目名稱"].ToString().Trim();
-                }
-
-                cdb._群組代碼 = "005";
-                cdb._項目代碼 = Server.UrlDecode(rtype);
-                dt = cdb.GetList();
-
-                if (dt.Rows.Count > 0)
-                {
-                    rtype_v = dt.Rows[0]["項目名稱"].ToString().Trim();
-                }
-
                 string day_v = string.IsNullOrEmpty(day) ? "" : Server.UrlDecode(day).Substring(0, 4) + "/" + Server.UrlDecode(day).Substring(4, 2) + "/" + Server.UrlDecode(day).Substring(6, 2);
 
                 string Subject = "提問單填表人員問題新增通知";
@@ -178,11 +190,19 @@ public partial class handler_AddQuestionForm : System.Web.UI.Page
                 mailContent = "系統通知:<br><br>線上提問單系統已有同仁新增問題，請上 <a href = 'https://powersunba.com.tw/SunBa_Question/WebPage/index.aspx'>線上提問單系統</a>";
                 mailContent += " 進行檢視並確認問題內容，以下為問題詳細資料，感謝您<br>";
                 mailContent += "編號: " + DateTime.Now.Year.ToString() + "-" + nMonth + "-" + sn + "<br/>問題類別:" + questionTypeName + "<br/>填表人: " + Server.UrlDecode(fillformname) +
-                    "<br/>提出日期: " + day_v + "<br/>急迫性: " + rtype_v + "<br/>問題描述: " + Server.UrlDecode(nContent);
+                    "<br/>提出日期: " + day_v + "<br/>急迫性: " + rtype_v + "<br/>是否結案: <span style='color:red'>" + isclosed_v + "</span><br/>問題描述: " + Server.UrlDecode(nContent);
                 send_mail.MailTo(mailTo, Subject, mailContent);
             }
             else
             {
+                string qsn = string.Empty;
+                DataTable ddt = qdb.GetData();
+
+                if (ddt.Rows.Count > 0)
+                {
+                    qsn = ddt.Rows[0]["編號"].ToString().Trim();
+                }
+
                 qdb._修改者 = LogInfo.empName;
                 qdb._修改者id = LogInfo.empNo;
                 qdb.UpdateData(oConn, myTrans);
@@ -194,6 +214,16 @@ public partial class handler_AddQuestionForm : System.Web.UI.Page
                     + Server.UrlDecode(rtype) + Server.UrlDecode(nContent);
 
                 qldb.InsertData(oConn, myTrans);
+
+                string day_v = string.IsNullOrEmpty(day) ? "" : Server.UrlDecode(day).Substring(0, 4) + "/" + Server.UrlDecode(day).Substring(4, 2) + "/" + Server.UrlDecode(day).Substring(6, 2);
+
+                string Subject = "提問單填表人員問題更新通知";
+
+                mailContent = "系統通知:<br><br>線上提問單系統已有內容更新，請上 <a href = 'https://powersunba.com.tw/SunBa_Question/WebPage/index.aspx'>線上提問單系統</a>";
+                mailContent += " 進行檢視，以下為內容更新之詳細資料，感謝您<br>";
+                mailContent += "編號: " + qsn + "<br/>問題類別:" + questionTypeName + "<br/>填表人: " + Server.UrlDecode(fillformname) +
+                    "<br/>提出日期: " + day_v + "<br/>急迫性: " + rtype_v + "<br/>是否結案: <span style='color:red'>" + isclosed_v + "</span><br/>問題描述: " + Server.UrlDecode(nContent);
+                send_mail.MailTo(mailTo, Subject, mailContent);
             }
 
 

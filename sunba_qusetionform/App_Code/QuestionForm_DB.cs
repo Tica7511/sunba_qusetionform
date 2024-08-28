@@ -32,6 +32,7 @@ public class QuestionForm_DB
     string 內容 = string.Empty;
     string 回覆日期 = string.Empty;
     string 預計完成日 = string.Empty;
+    string 是否結案 = string.Empty;
     string 回覆內容 = string.Empty;
     string 資料狀態 = string.Empty;
     string 排序名稱 = string.Empty;
@@ -62,6 +63,7 @@ public class QuestionForm_DB
     public string _內容 { set { 內容 = value; } }
     public string _回覆日期 { set { 回覆日期 = value; } }
     public string _預計完成日 { set { 預計完成日 = value; } }
+    public string _是否結案 { set { 是否結案 = value; } }
     public string _回覆內容 { set { 回覆內容 = value; } }
     public string _資料狀態 { set { 資料狀態 = value; } }
     public string _排序名稱 { set { 排序名稱 = value; } }
@@ -263,6 +265,24 @@ and (@問題類別='' or 問題類別=@問題類別) and (@員工編號='' or �
             }
         }
 
+        if (!string.IsNullOrEmpty(是否結案))
+        {
+            string[] strtemp = 是否結案.Split(',');
+            switch (strtemp.Length)
+            {
+                case 1:
+                    sb.Append(@" and (是否結案='" + strtemp[0] + "')");
+                    break;
+                case 2:
+                    sb.Append(@" and (是否結案='" + strtemp[0] + "' or 是否結案='" + strtemp[1] + "' or 是否結案 is null)");
+                    break;
+            }
+        }
+        else
+        {
+            sb.Append(@" and (是否結案='' or 是否結案 is null)");
+        }
+
         sb.Append(@"
 --總筆數
 select count(*) as total from #tmp
@@ -277,6 +297,9 @@ select ROW_NUMBER() over (");
                 {
                     case "編號":
                         sb.Append(@"order by 編號 DESC");
+                        break;
+                    case "是否結案":
+                        sb.Append(@"order by 是否結案 DESC");
                         break;
                     case "問題類別":
                         sb.Append(@"order by 問題類別 DESC");
@@ -310,6 +333,9 @@ select ROW_NUMBER() over (");
                 {
                     case "編號":
                         sb.Append(@"order by 編號 ASC");
+                        break;
+                    case "是否結案":
+                        sb.Append(@"order by 是否結案 ASC");
                         break;
                     case "問題類別":
                         sb.Append(@"order by 問題類別 ASC");
@@ -355,6 +381,7 @@ select ROW_NUMBER() over (");
         oCmd.Parameters.AddWithValue("@填表人", 填表人);
         oCmd.Parameters.AddWithValue("@部門_id", 部門_id);
         oCmd.Parameters.AddWithValue("@程度", 程度);
+        oCmd.Parameters.AddWithValue("@是否結案", 是否結案);
         oCmd.Parameters.AddWithValue("@目前狀態", 目前狀態);
         oCmd.Parameters.AddWithValue("@查詢起日", startday);
         oCmd.Parameters.AddWithValue("@查詢迄日", endday);
@@ -589,6 +616,7 @@ guid,
 部門,
 提出日期,
 程度,
+是否結案,
 內容,
 建立者,
 建立者id,
@@ -609,6 +637,7 @@ guid,
 @部門,
 @提出日期,
 @程度,
+@是否結案,
 @內容,
 @建立者,
 @建立者id,
@@ -632,6 +661,7 @@ guid,
         oCmd.Parameters.AddWithValue("@部門", 部門);
         oCmd.Parameters.AddWithValue("@提出日期", 提出日期);
         oCmd.Parameters.AddWithValue("@程度", 程度);
+        oCmd.Parameters.AddWithValue("@是否結案", 是否結案);
         oCmd.Parameters.AddWithValue("@內容", 內容);
         oCmd.Parameters.AddWithValue("@建立者", 建立者);
         oCmd.Parameters.AddWithValue("@建立者id", 建立者id);
@@ -650,6 +680,7 @@ guid,
 update 提問表單 set 
 程度=@程度,
 內容=@內容,
+是否結案=@是否結案,
 修改者=@修改者, 
 修改者id=@修改者id, 
 修改日期=@修改日期 
@@ -660,6 +691,7 @@ where guid=@guid and 資料狀態=@資料狀態
 
         oCmd.Parameters.AddWithValue("@guid", guid);
         oCmd.Parameters.AddWithValue("@程度", 程度);
+        oCmd.Parameters.AddWithValue("@是否結案", 是否結案);
         oCmd.Parameters.AddWithValue("@內容", 內容);
         oCmd.Parameters.AddWithValue("@修改者", 修改者);
         oCmd.Parameters.AddWithValue("@修改者id", 修改者id);
