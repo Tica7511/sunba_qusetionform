@@ -79,14 +79,15 @@ public class SSO_DB
         StringBuilder sb = new StringBuilder();
 
         sb.Append(@" select distinct a.帳號, a.姓名 from V_人員資料表2 a
-left join UOF_Training_SUNBA..TB_EB_USER b on a.帳號 COLLATE Chinese_Taiwan_Stroke_CI_AS =b.ACCOUNT ");
+left join UOF_Training_SUNBA..TB_EB_USER b on a.帳號 COLLATE Chinese_Taiwan_Stroke_CI_AS =b.ACCOUNT 
+where 單位名稱 like '%森霸%' and ");
 
         if (!string.IsNullOrEmpty(GROUP_ID))
-            sb.Append(@" where GROUP_ID=@GROUP_ID and (b.EXPIRE_DATE >= SYSDATETIMEOFFSET() and b.IS_SUSPENDED<>1) ");
+            sb.Append(@" GROUP_ID=@GROUP_ID and (b.EXPIRE_DATE >= SYSDATETIMEOFFSET() and b.IS_SUSPENDED<>1) ");
         else
-            sb.Append(@" where (b.EXPIRE_DATE >= SYSDATETIMEOFFSET() and b.IS_SUSPENDED<>1) ");
+            sb.Append(@" (b.EXPIRE_DATE >= SYSDATETIMEOFFSET() and b.IS_SUSPENDED<>1) ");
 
-        sb.Append(@" order by 姓名, 帳號 asc ");
+        sb.Append(@" order by 姓名 asc ");
 
         oCmd.CommandText = sb.ToString();
         oCmd.CommandType = CommandType.Text;

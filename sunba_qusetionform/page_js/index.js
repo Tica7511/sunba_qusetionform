@@ -237,7 +237,7 @@
                     var ddlstr = '<option value=""> -- 請選擇 -- </option>';
                     if ($(data).find("data_item").length > 0) {
                         $(data).find("data_item").each(function (i) {
-                            ddlstr += '<option value="' + $(this).children("帳號").text().trim() + '">' + $(this).children("帳號").text().trim() + ' ' + $(this).children("姓名").text().trim() + '</option>';
+                            ddlstr += '<option value="' + $(this).children("帳號").text().trim() + '">' + $(this).children("姓名").text().trim() + '</option>';
                         });
                     }
 
@@ -1016,7 +1016,7 @@ function getCompanyList(type, orgnization) {
                             ddlstr += '<option value="' + $(this).children("GROUP_ID").text().trim() + '">' + $(this).children("GROUP_NAME").text().trim() + '</option>';
                         }
                         else {
-                            ddlstr += '<option value="' + $(this).children("帳號").text().trim() + '">' + $(this).children("帳號").text().trim() + ' ' + $(this).children("姓名").text().trim() + '</option>';
+                            ddlstr += '<option value="' + $(this).children("帳號").text().trim() + '">' + $(this).children("姓名").text().trim() + '</option>';
                         }
                     });
                 }
