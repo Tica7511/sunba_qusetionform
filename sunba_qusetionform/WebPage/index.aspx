@@ -210,9 +210,8 @@
 					</div>
 				</div>
             </div>
-			<div class="text-end mt-2">
+			<div class="text-end mt-2 order-0 order-md-1">
 			    總資料筆數: <span id="sp_count"></span>&nbsp;&nbsp;
-				<%--<a href="javascript:void(0);" id="exportbtn" class="btn btn-primary text-nowrap btn-sm">匯出</a>--%>
 			    <a href="javascript:void(0);" id="clearbtn" class="btn btn-primary text-nowrap btn-sm">清除</a>
 			    <a href="javascript:void(0);" id="querybtn" class="btn btn-primary text-nowrap btn-sm">查詢</a>
 			</div>
@@ -223,7 +222,7 @@
                 <h3 class="fw-bold">查詢結果</h3>
             </div>
             <div class="col-md-auto order-0 order-md-1">
-				<%--<a href="javascript:void(0);" id="exportbtn" class="btn btn-primary text-nowrap btn-sm">匯出</a>--%> 
+				<a href="javascript:void(0);" id="exportbtn" class="btn btn-primary text-nowrap btn-sm">匯出</a> 
                 <a href="javascript:void(0);" id="newbtn" class="btn btn-primary text-nowrap btn-sm docShow">新增</a>
             </div>
         </div>

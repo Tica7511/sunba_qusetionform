@@ -395,27 +395,26 @@ select ROW_NUMBER() over (");
         return ds;
     }
 
-    public DataTable GetExcelList()
+    public DataTable GetExcelList(string startday, string endday)
     {
         SqlCommand oCmd = new SqlCommand();
         oCmd.Connection = new SqlConnection(ConfigurationManager.AppSettings["ConnectionString"]);
         StringBuilder sb = new StringBuilder();
 
-        sb.Append(@"select *, 
-項次,舊編號,年度,月份,
-公司別_V=(select 項目名稱 from 代碼檔 where 群組代碼='001' and 代碼檔.項目代碼=提問表單.公司別),
-case 公司別 when '01' then (select 項目名稱 from 代碼檔 where 群組代碼='002' and 代碼檔.項目代碼=提問表單.單位)
-when '02' then (select 項目名稱 from 代碼檔 where 群組代碼='003' and 代碼檔.項目代碼=提問表單.單位) end '單位_V',
+        sb.Append(@"select *,
+問題類別_V=(select 項目名稱 from 代碼檔 where 群組代碼='001' and 代碼檔.項目代碼=提問表單.問題類別),
 程度_V=(select 項目名稱 from 代碼檔 where 群組代碼='005' and 代碼檔.項目代碼=提問表單.程度),
 目前狀態_V=(select 項目名稱 from 代碼檔 where 群組代碼='004' and 代碼檔.項目代碼=提問表單.目前狀態),
+case when 是否結案='Y' then '已結案' else '尚未結案' end as 是否結案_V,
 ( select dbo.clearTag( 內容 ) )as 內容_V,
-( select dbo.clearTag( 回覆內容 ) )as 回覆內容_V 
+回覆內容_V=(select dbo.clearTag( 回覆內容 ) from 回覆表單 where 回覆表單.guid = 提問表單.guid)
 from 提問表單 where 資料狀態='A' 
- and (@項次='' or 項次 like '%' + @項次 + '%') and (@編號='' or 編號 like '%' + @編號 + '%') and (@填表人='' or 填表人=@填表人) and (@公司別='' or 公司別=@公司別) 
-and (@單位='' or 單位=@單位) and (@目前狀態='' or 目前狀態=@目前狀態) and (@內容='' or 內容 like '%' + @內容 + '%' or 舊編號 like '%' + @內容 + '%') 
-and (@回覆內容='' or 回覆內容 like '%' + @回覆內容 + '%' or 舊編號 like '%' + @回覆內容 + '%')  
-and convert(int, SUBSTRING(編號,1,4) + SUBSTRING(編號,6,2) + SUBSTRING(編號,9,2))<=20230299
+ and (@項次='' or 項次 like '%' + @項次 + '%') and (@編號='' or 編號 like '%' + @編號 + '%') and (@目前狀態='' or 目前狀態=@目前狀態) 
+and (@內容='' or 內容 like '%' + @內容 + '%') and (@回覆內容='' or 回覆內容 like '%' + @回覆內容 + '%') 
+and (@問題類別='' or 問題類別=@問題類別) and (@員工編號='' or 員工編號=@員工編號) and (@部門_id='' or 部門_id=@部門_id) 
 ");
+        if (!string.IsNullOrEmpty(startday) && !string.IsNullOrEmpty(endday))
+            sb.Append(@" and 提出日期 between convert(int, @查詢起日) and convert(int, @查詢迄日)");
 
         if (!string.IsNullOrEmpty(程度))
         {
@@ -434,7 +433,25 @@ and convert(int, SUBSTRING(編號,1,4) + SUBSTRING(編號,6,2) + SUBSTRING(編�
             }
         }
 
-        sb.Append(@" order by convert(int, 項次) DESC");
+        if (!string.IsNullOrEmpty(是否結案))
+        {
+            string[] strtemp = 是否結案.Split(',');
+            switch (strtemp.Length)
+            {
+                case 1:
+                    sb.Append(@" and (是否結案='" + strtemp[0] + "')");
+                    break;
+                case 2:
+                    sb.Append(@" and (是否結案='" + strtemp[0] + "' or 是否結案='" + strtemp[1] + "' or 是否結案 is null)");
+                    break;
+            }
+        }
+        else
+        {
+            sb.Append(@" and (是否結案='' or 是否結案 is null)");
+        }
+
+        sb.Append(@" order by 問題類別, convert(int, 提出日期) ASC");
 
         oCmd.CommandText = sb.ToString();
         oCmd.CommandType = CommandType.Text;
@@ -443,9 +460,15 @@ and convert(int, SUBSTRING(編號,1,4) + SUBSTRING(編號,6,2) + SUBSTRING(編�
 
         oCmd.Parameters.AddWithValue("@項次", 項次);
         oCmd.Parameters.AddWithValue("@編號", 編號);
+        oCmd.Parameters.AddWithValue("@問題類別", 問題類別);
+        oCmd.Parameters.AddWithValue("@員工編號", 員工編號);
         oCmd.Parameters.AddWithValue("@填表人", 填表人);
+        oCmd.Parameters.AddWithValue("@部門_id", 部門_id);
         oCmd.Parameters.AddWithValue("@程度", 程度);
+        oCmd.Parameters.AddWithValue("@是否結案", 是否結案);
         oCmd.Parameters.AddWithValue("@目前狀態", 目前狀態);
+        oCmd.Parameters.AddWithValue("@查詢起日", startday);
+        oCmd.Parameters.AddWithValue("@查詢迄日", endday);
         oCmd.Parameters.AddWithValue("@內容", 內容);
         oCmd.Parameters.AddWithValue("@回覆內容", 回覆內容);
 

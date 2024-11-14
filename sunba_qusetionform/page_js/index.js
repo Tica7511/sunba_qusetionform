@@ -18,6 +18,11 @@
     $("#Misclosed").val(ckclosedvalue);
     getData(0);
 
+    $("#exportbtn").attr("href", "../EXPORTEXCEL.aspx?item=" + $("#Mitem").val() + "&num=" + $("#Mnum").val() + "&questionType=" + $("#MquestionType").val() +
+        "&empid=" + $("#Mempid").val() + "&fillformname=" + $("#Mfillformname").val() + "&orgnization=" + $("#Morgnization").val() + "&startday=" + $("#Mstartday").val() +
+        "&endday=" + $("#Mendday").val() + "&state=" + $("#Mstate").val() + "&content=" + $("#Mcontent").val() + "&replycontent=" + $("#Mreplycontent").val() +
+        "&urgency=" + $("#Mtype").val() + "&isclosed=" + $("#Misclosed").val());
+
     //tinymce
     tinymce.init({
         selector: '#n_suggestion',
@@ -190,12 +195,12 @@
         $("#Mreplycontent").val($("#txt_replycontent").val());
 
         getData(0);
-    });
 
-    //匯出按鈕
-    //$(document).on("click", "#exportbtn", function () {
-    //    location.href("")
-    //});
+        $("#exportbtn").attr("href", "../EXPORTEXCEL.aspx?item=" + $("#Mitem").val() + "&num=" + $("#Mnum").val() + "&questionType=" + $("#MquestionType").val() +
+            "&empid=" + $("#Mempid").val() + "&fillformname=" + $("#Mfillformname").val() + "&orgnization=" + $("#Morgnization").val() + "&startday=" + $("#Mstartday").val() +
+            "&endday=" + $("#Mendday").val() + "&state=" + $("#Mstate").val() + "&content=" + $("#Mcontent").val() + "&replycontent=" + $("#Mreplycontent").val() +
+            "&urgency=" + $("#Mtype").val() + "&isclosed=" + $("#Misclosed").val());
+    });
 
     //清除按鈕
     $(document).on("click", "#clearbtn", function () {
@@ -897,12 +902,12 @@ function getData3() {
                         //else
                         //    $("#ck_contract").prop("checked", false);
                         if ($(this).children("需求是否在第一期合約中").text().trim() == 'Y') {
-                            $("input[name='ckcontract'][value='Y']").prop("checked", false);
-                            $("input[name='ckcontract'][value='']").prop("checked", true);
-                        }
-                        else {
                             $("input[name='ckcontract'][value='Y']").prop("checked", true);
                             $("input[name='ckcontract'][value='']").prop("checked", false);
+                        }
+                        else {
+                            $("input[name='ckcontract'][value='Y']").prop("checked", false);
+                            $("input[name='ckcontract'][value='']").prop("checked", true);
                         }
                         var editor = tinymce.get('n_replies');
                         editor.setContent($(this).children("回覆內容").text().trim());
