@@ -73,6 +73,7 @@
     <input type="hidden" id="Mstate" />
     <input type="hidden" id="Mtype" />
     <input type="hidden" id="Misclosed" />
+    <input type="hidden" id="Misincontract" />
     <input type="hidden" id="Mcontent" />
     <input type="hidden" id="Mreplycontent" />
     <input type="hidden" id="Fguid" />
@@ -205,6 +206,17 @@
 							<div class="col-md-auto flex-grow-1">
 								<input name="ck_isclosed" type="checkbox" value="Y" /> 是 
 								<input name="ck_isclosed" type="checkbox" value="" /> 否 
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="row flex-md-nowrap align-items-center">
+							<div class="col-md-auto TitleSetWidth text-md-end">
+								<label class="form-label">需求是否在第一期合約中</label>
+							</div>
+							<div class="col-md-auto flex-grow-1">
+								<input name="ck_isincontract" type="checkbox" value="Y" /> 是 
+								<input name="ck_isincontract" type="checkbox" value="" /> 否 
 							</div>
 						</div>
 					</div>

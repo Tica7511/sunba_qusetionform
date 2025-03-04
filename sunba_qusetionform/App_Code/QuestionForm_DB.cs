@@ -33,6 +33,7 @@ public class QuestionForm_DB
     string 回覆日期 = string.Empty;
     string 預計完成日 = string.Empty;
     string 是否結案 = string.Empty;
+    string 需求是否在第一期合約中 = string.Empty;
     string 回覆內容 = string.Empty;
     string 資料狀態 = string.Empty;
     string 排序名稱 = string.Empty;
@@ -64,6 +65,7 @@ public class QuestionForm_DB
     public string _回覆日期 { set { 回覆日期 = value; } }
     public string _預計完成日 { set { 預計完成日 = value; } }
     public string _是否結案 { set { 是否結案 = value; } }
+    public string _需求是否在第一期合約中 { set { 需求是否在第一期合約中 = value; } }
     public string _回覆內容 { set { 回覆內容 = value; } }
     public string _資料狀態 { set { 資料狀態 = value; } }
     public string _排序名稱 { set { 排序名稱 = value; } }
@@ -233,16 +235,17 @@ and (@問題類別='' or 問題類別=@問題類別) and (@員工編號='' or �
         oCmd.Connection = new SqlConnection(ConfigurationManager.AppSettings["ConnectionString"]);
         StringBuilder sb = new StringBuilder();
 
-        sb.Append(@"select *,
+        sb.Append(@"select 提問表單.*,回覆表單.需求是否在第一期合約中,
 問題類別_V=(select 項目名稱 from 代碼檔 where 群組代碼='001' and 代碼檔.項目代碼=提問表單.問題類別),
 程度_V=(select 項目名稱 from 代碼檔 where 群組代碼='005' and 代碼檔.項目代碼=提問表單.程度),
 目前狀態_V=(select 項目名稱 from 代碼檔 where 群組代碼='004' and 代碼檔.項目代碼=提問表單.目前狀態),
 ( select dbo.clearTag( 內容 ) )as 內容_V,
-( select dbo.clearTag( 回覆內容 ) )as 回覆內容_V 
+( select dbo.clearTag( 提問表單.回覆內容 ) )as 回覆內容_V 
 into #tmp 
-from 提問表單 where 資料狀態='A' 
- and (@項次='' or 項次 like '%' + @項次 + '%') and (@編號='' or 編號 like '%' + @編號 + '%') and (@目前狀態='' or 目前狀態=@目前狀態) 
-and (@內容='' or 內容 like '%' + @內容 + '%') and (@回覆內容='' or 回覆內容 like '%' + @回覆內容 + '%') 
+from 提問表單  
+left join 回覆表單 on 提問表單.guid=回覆表單.guid where 提問表單.資料狀態='A' 
+and (@項次='' or 項次 like '%' + @項次 + '%') and (@編號='' or 編號 like '%' + @編號 + '%') and (@目前狀態='' or 提問表單.目前狀態=@目前狀態) 
+and (@內容='' or 內容 like '%' + @內容 + '%') and (@回覆內容='' or 提問表單.回覆內容 like '%' + @回覆內容 + '%') 
 and (@問題類別='' or 問題類別=@問題類別) and (@員工編號='' or 員工編號=@員工編號) and (@部門_id='' or 部門_id=@部門_id) 
 ");
         if (!string.IsNullOrEmpty(startday) && !string.IsNullOrEmpty(endday))
@@ -281,6 +284,24 @@ and (@問題類別='' or 問題類別=@問題類別) and (@員工編號='' or �
         else
         {
             sb.Append(@" and (是否結案='' or 是否結案 is null)");
+        }
+
+        if (!string.IsNullOrEmpty(需求是否在第一期合約中))
+        {
+            string[] strtemp = 需求是否在第一期合約中.Split(',');
+            switch (strtemp.Length)
+            {
+                case 1:
+                    sb.Append(@" and (需求是否在第一期合約中='" + strtemp[0] + "')");
+                    break;
+                case 2:
+                    sb.Append(@" and (需求是否在第一期合約中='" + strtemp[0] + "' or 需求是否在第一期合約中='" + strtemp[1] + "' or 需求是否在第一期合約中 is null)");
+                    break;
+            }
+        }
+        else
+        {
+            sb.Append(@" and (需求是否在第一期合約中='' or 需求是否在第一期合約中 is null)");
         }
 
         sb.Append(@"
@@ -401,16 +422,18 @@ select ROW_NUMBER() over (");
         oCmd.Connection = new SqlConnection(ConfigurationManager.AppSettings["ConnectionString"]);
         StringBuilder sb = new StringBuilder();
 
-        sb.Append(@"select *,
+        sb.Append(@"select 提問表單.*,回覆表單.需求是否在第一期合約中,
 問題類別_V=(select 項目名稱 from 代碼檔 where 群組代碼='001' and 代碼檔.項目代碼=提問表單.問題類別),
 程度_V=(select 項目名稱 from 代碼檔 where 群組代碼='005' and 代碼檔.項目代碼=提問表單.程度),
 目前狀態_V=(select 項目名稱 from 代碼檔 where 群組代碼='004' and 代碼檔.項目代碼=提問表單.目前狀態),
 case when 是否結案='Y' then '已結案' else '尚未結案' end as 是否結案_V,
+case when 回覆表單.需求是否在第一期合約中='Y' then '是' else '否' end as 需求是否在第一期合約中_V,
 ( select dbo.clearTag( 內容 ) )as 內容_V,
 回覆內容_V=(select dbo.clearTag( 回覆內容 ) from 回覆表單 where 回覆表單.guid = 提問表單.guid)
-from 提問表單 where 資料狀態='A' 
- and (@項次='' or 項次 like '%' + @項次 + '%') and (@編號='' or 編號 like '%' + @編號 + '%') and (@目前狀態='' or 目前狀態=@目前狀態) 
-and (@內容='' or 內容 like '%' + @內容 + '%') and (@回覆內容='' or 回覆內容 like '%' + @回覆內容 + '%') 
+from 提問表單 
+left join 回覆表單 on 提問表單.guid=回覆表單.guid where 提問表單.資料狀態='A' 
+ and (@項次='' or 項次 like '%' + @項次 + '%') and (@編號='' or 編號 like '%' + @編號 + '%') and (@目前狀態='' or 提問表單.目前狀態=@目前狀態) 
+and (@內容='' or 內容 like '%' + @內容 + '%') and (@回覆內容='' or 提問表單.回覆內容 like '%' + @回覆內容 + '%') 
 and (@問題類別='' or 問題類別=@問題類別) and (@員工編號='' or 員工編號=@員工編號) and (@部門_id='' or 部門_id=@部門_id) 
 ");
         if (!string.IsNullOrEmpty(startday) && !string.IsNullOrEmpty(endday))
@@ -449,6 +472,24 @@ and (@問題類別='' or 問題類別=@問題類別) and (@員工編號='' or �
         else
         {
             sb.Append(@" and (是否結案='' or 是否結案 is null)");
+        }
+
+        if (!string.IsNullOrEmpty(需求是否在第一期合約中))
+        {
+            string[] strtemp = 需求是否在第一期合約中.Split(',');
+            switch (strtemp.Length)
+            {
+                case 1:
+                    sb.Append(@" and (需求是否在第一期合約中='" + strtemp[0] + "')");
+                    break;
+                case 2:
+                    sb.Append(@" and (需求是否在第一期合約中='" + strtemp[0] + "' or 需求是否在第一期合約中='" + strtemp[1] + "' or 需求是否在第一期合約中 is null)");
+                    break;
+            }
+        }
+        else
+        {
+            sb.Append(@" and (需求是否在第一期合約中='' or 需求是否在第一期合約中 is null)");
         }
 
         sb.Append(@" order by 問題類別, convert(int, 提出日期) ASC");

@@ -1,5 +1,6 @@
 ﻿$(document).ready(function () {
     var ckclosedvalue = '';
+    var ckincontract = '';
     getDDL('001', '', 'sel_questionType');
     getCompanyList("orgnization", "");
     getCompanyList("empname", "");
@@ -16,12 +17,23 @@
         }
     });
     $("#Misclosed").val(ckclosedvalue);
+    $("input[name='ck_isincontract'][value='Y']").prop("checked", true);
+    $("input[name='ck_isincontract'][value='']").prop("checked", true);
+    $('input[name="ck_isincontract"]:checked').each(function () {
+        if (ckincontract == "") {
+            ckincontract += this.value;
+        }
+        else {
+            ckincontract += "," + this.value;
+        }
+    });
+    $("#Misincontract").val(ckincontract);
     getData(0);
 
     $("#exportbtn").attr("href", "../EXPORTEXCEL.aspx?item=" + $("#Mitem").val() + "&num=" + $("#Mnum").val() + "&questionType=" + $("#MquestionType").val() +
         "&empid=" + $("#Mempid").val() + "&fillformname=" + $("#Mfillformname").val() + "&orgnization=" + $("#Morgnization").val() + "&startday=" + $("#Mstartday").val() +
         "&endday=" + $("#Mendday").val() + "&state=" + $("#Mstate").val() + "&content=" + $("#Mcontent").val() + "&replycontent=" + $("#Mreplycontent").val() +
-        "&urgency=" + $("#Mtype").val() + "&isclosed=" + $("#Misclosed").val());
+        "&urgency=" + $("#Mtype").val() + "&isclosed=" + $("#Misclosed").val() + "&isincontract=" + $("#Misincontract").val());
 
     //tinymce
     tinymce.init({
@@ -161,6 +173,7 @@
     $(document).on("click", "#querybtn", function () {
         var cktypevalue = '';
         var ckclosedvalue = '';
+        var ckincontract = '';
 
         $("#Mitem").val($("#txt_item").val());
         $("#Mnum").val($("#txt_num").val());
@@ -191,6 +204,15 @@
             }
         });
         $("#Misclosed").val(ckclosedvalue);
+        $('input[name="ck_isincontract"]:checked').each(function () {
+            if (ckincontract == "") {
+                ckincontract += this.value;
+            }
+            else {
+                ckincontract += "," + this.value;
+            }
+        });
+        $("#Misincontract").val(ckincontract);
         $("#Mcontent").val($("#txt_content").val());
         $("#Mreplycontent").val($("#txt_replycontent").val());
 
@@ -199,7 +221,7 @@
         $("#exportbtn").attr("href", "../EXPORTEXCEL.aspx?item=" + $("#Mitem").val() + "&num=" + $("#Mnum").val() + "&questionType=" + $("#MquestionType").val() +
             "&empid=" + $("#Mempid").val() + "&fillformname=" + $("#Mfillformname").val() + "&orgnization=" + $("#Morgnization").val() + "&startday=" + $("#Mstartday").val() +
             "&endday=" + $("#Mendday").val() + "&state=" + $("#Mstate").val() + "&content=" + $("#Mcontent").val() + "&replycontent=" + $("#Mreplycontent").val() +
-            "&urgency=" + $("#Mtype").val() + "&isclosed=" + $("#Misclosed").val());
+            "&urgency=" + $("#Mtype").val() + "&isclosed=" + $("#Misclosed").val() + "&isincontract=" + $("#Misincontract").val());
     });
 
     //清除按鈕
@@ -213,6 +235,8 @@
         getDDL2('005', '', 'div_type');
         $("input[name='ck_isclosed'][value='Y']").prop("checked", true);
         $("input[name='ck_isclosed'][value='']").prop("checked", true);
+        $("input[name='ck_isincontract'][value='Y']").prop("checked", true);
+        $("input[name='ck_isincontract'][value='']").prop("checked", true);
         $("#sel_state").val('');
         $("#txt_startday").val('');
         $("#txt_endday").val('');
@@ -715,6 +739,7 @@ function getData(p) {
             replycontent: $("#Mreplycontent").val(),
             urgency: $("#Mtype").val(),
             isclosed: $("#Misclosed").val(),
+            isincontract: $("#Misincontract").val(),
             SortName: $("#tmporderby").val(),
             SortMethod: $("#tmpsortby").val()
         },

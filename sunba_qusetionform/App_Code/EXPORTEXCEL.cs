@@ -35,6 +35,7 @@ namespace ED.HR.EXPORTEXCEL.WebForm
             string replycontent = (string.IsNullOrEmpty(Request["replycontent"])) ? "" : Request["replycontent"].ToString().Trim();
             string rtype = string.IsNullOrEmpty(Request["cktype"]) ? "" : Request["cktype"].ToString().Trim();
             string isclosed = string.IsNullOrEmpty(Request["isclosed"]) ? "" : Request["isclosed"].ToString().Trim();
+            string isincontract = string.IsNullOrEmpty(Request["isincontract"]) ? "" : Request["isincontract"].ToString().Trim();
             string type = (string.IsNullOrEmpty(Request["type"])) ? "" : Request["type"].ToString().Trim();
             string urgency = (string.IsNullOrEmpty(Request["urgency"])) ? "" : Request["urgency"].ToString().Trim();
             string cpName = string.Empty;
@@ -68,6 +69,7 @@ namespace ED.HR.EXPORTEXCEL.WebForm
             db._回覆內容 = replycontent;
             db._程度 = urgency;
             db._是否結案 = isclosed;
+            db._需求是否在第一期合約中 = isincontract;
 
             dt = db.GetExcelList(startday, endday);
 
@@ -82,6 +84,7 @@ namespace ED.HR.EXPORTEXCEL.WebForm
             sheet.GetRow(0).CreateCell(7).SetCellValue("部門");
             sheet.GetRow(0).CreateCell(8).SetCellValue("提出日期");
             sheet.GetRow(0).CreateCell(9).SetCellValue("急迫性");
+            sheet.GetRow(0).CreateCell(10).SetCellValue("需求是否在第一期合約中");
             if (dt.Rows.Count > 0)
             {
                 for (int i = 0; i < dt.Rows.Count; i++)
@@ -97,6 +100,7 @@ namespace ED.HR.EXPORTEXCEL.WebForm
                     sheet.GetRow(i + 1).CreateCell(7).SetCellValue(dt.Rows[i]["部門"].ToString().Trim());
                     sheet.GetRow(i + 1).CreateCell(8).SetCellValue(dt.Rows[i]["提出日期"].ToString().Trim());
                     sheet.GetRow(i + 1).CreateCell(9).SetCellValue(dt.Rows[i]["程度_V"].ToString().Trim());
+                    sheet.GetRow(i + 1).CreateCell(10).SetCellValue(dt.Rows[i]["需求是否在第一期合約中_V"].ToString().Trim());
                 }
             }
             fileName = "提問單匯出總表.xls";

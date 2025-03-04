@@ -52,6 +52,7 @@ public partial class handler_GetQestionForm : System.Web.UI.Page
             string replycontent = (string.IsNullOrEmpty(Request["replycontent"])) ? "" : Request["replycontent"].ToString().Trim();
             string rtype = string.IsNullOrEmpty(Request["cktype"]) ? "" : Request["cktype"].ToString().Trim();
             string isclosed = string.IsNullOrEmpty(Request["isclosed"]) ? "" : Request["isclosed"].ToString().Trim();
+            string isincontract = string.IsNullOrEmpty(Request["isincontract"]) ? "" : Request["isincontract"].ToString().Trim();
             string type = (string.IsNullOrEmpty(Request["type"])) ? "" : Request["type"].ToString().Trim();
             string urgency = (string.IsNullOrEmpty(Request["urgency"])) ? "" : Request["urgency"].ToString().Trim();
             string SortName = (string.IsNullOrEmpty(Request["SortName"])) ? "" : Common.FilterCheckMarxString(Request["SortName"].ToString().Trim());
@@ -74,6 +75,7 @@ public partial class handler_GetQestionForm : System.Web.UI.Page
                 db._回覆內容 = replycontent;
                 db._程度 = urgency;
                 db._是否結案 = isclosed;
+                db._需求是否在第一期合約中 = isincontract;
                 db._排序名稱 = SortName;
                 db._排序狀態 = SortMethod;
 
