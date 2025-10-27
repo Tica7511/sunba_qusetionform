@@ -10,6 +10,7 @@ using System.Data;
 public partial class handler_GetReplyForm : System.Web.UI.Page
 {
     Reply_DB db = new Reply_DB();
+    QuestionForm_DB qdb = new QuestionForm_DB();
     Competence_DB cdb = new Competence_DB();
     FileTable_DB fdb = new FileTable_DB();
     protected void Page_Load(object sender, EventArgs e)
@@ -21,6 +22,7 @@ public partial class handler_GetReplyForm : System.Web.UI.Page
         XmlDocument xDoc = new XmlDocument();
         DataSet ds = new DataSet();
         DataTable dt = new DataTable();
+        DataTable dt2 = new DataTable();
         DataTable dtnew = new DataTable();
         try
         {
@@ -44,11 +46,17 @@ public partial class handler_GetReplyForm : System.Web.UI.Page
                     file_dt = DataEncode(fdb.GetList());
                 }
 
+                qdb._guid = guid;
+
+                dt2 = qdb.GetData();
+
                 string xmlstr = string.Empty;
                 string xmlstr2 = string.Empty;
+                string xmlstr3 = string.Empty;
                 xmlstr = DataTableToXml.ConvertDatatableToXML(dt, "dataList", "data_item");
                 xmlstr2 = DataTableToXml.ConvertDatatableToXML(file_dt, "fileList", "file_item");
-                xmlstr = "<?xml version='1.0' encoding='utf-8'?><root>" + xmlstr + xmlstr2 + "<datacount>" + dt.Rows.Count.ToString() + "</datacount></root>";
+                xmlstr3 = DataTableToXml.ConvertDatatableToXML(dt2, "dataList2", "data_item2");
+                xmlstr = "<?xml version='1.0' encoding='utf-8'?><root>" + xmlstr + xmlstr2 + xmlstr3 + "<datacount>" + dt.Rows.Count.ToString() + "</datacount></root>";
                 xDoc.LoadXml(xmlstr);
             }
         }

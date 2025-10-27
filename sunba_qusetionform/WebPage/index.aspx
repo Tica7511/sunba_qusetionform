@@ -492,6 +492,19 @@
 						        </div>
 						    </div>
 						</div><br />
+
+						<div class="col-md-auto order-1 order-md-0">
+						    <h4 class="fw-bold">提問內容</h4>
+						</div>
+						<div id="div_commentdivR" class="container-xxl mb-3">
+							<div id="div_suggestionR" class="border border-dark p-2 mt-1">
+
+							</div>
+						</div><br />
+
+						<div class="col-md-auto order-1 order-md-0">
+						    <h4 class="fw-bold">回覆內容</h4>
+						</div>
 						<div id="div_replytinymce" style="margin:auto;">
 						    <textarea id="n_replies" rows="20" cols="5"></textarea>
 						</div>

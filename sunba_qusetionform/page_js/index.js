@@ -762,7 +762,7 @@ function getData(p) {
                         tabstr += '<tr>';
                         tabstr += '<td class="text-center" nowrap="nowrap">' + $(this).children("項次").text().trim() + '</td>';
                         tabstr += '<td class="text-center" nowrap="nowrap">';
-                        //管理者僅能瀏覽填表內容(lapua除外)，森霸人員可以編輯自己的填表內容不是自己的僅能編輯
+                        //管理者僅能瀏覽填表內容(lapua除外)，森霸人員可以編輯自己的填表內容不是自己的僅能瀏覽
                         if ($("IsManager", data).text() == "Y") {
                             if ($("#SSOempid").val() == 'laputa') {
                                 tabstr += '<a href="javascript:void(0);" style="text-decoration: underline;" name="commenteditbtn" atype="edit" aid="' + $(this).children("guid").text().trim() + '">' + $(this).children("編號").text().trim() + '</a>';
@@ -916,7 +916,7 @@ function getData3() {
                 alert($(data).find("Error").attr("Message"));
             }
             else {
-                // Main
+                //回覆內容
                 if ($(data).find("data_item").length > 0) {
                     $(data).find("data_item").each(function (i) {
                         $("#ntxt_returnday").val(getDate($(this).children("回覆日期").text().trim()));
@@ -934,11 +934,20 @@ function getData3() {
                             $("input[name='ckcontract'][value='Y']").prop("checked", false);
                             $("input[name='ckcontract'][value='']").prop("checked", true);
                         }
+
                         var editor = tinymce.get('n_replies');
                         editor.setContent($(this).children("回覆內容").text().trim());
                         $("#n_replies").val($(this).children("回覆內容").text().trim());
                         $("#div_reply").empty();
                         $("#div_reply").append($(this).children("回覆內容").text().trim());
+                    });
+                }
+
+                //提問內容
+                if ($(data).find("data_item2").length > 0) {
+                    $(data).find("data_item2").each(function (i) {
+                        $("#div_suggestionR").empty();
+                        $("#div_suggestionR").append($(this).children("內容").text().trim());
                     });
                 }
 
